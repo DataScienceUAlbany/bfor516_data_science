@@ -1,0 +1,181 @@
+---
+title: "Exploratory Data Analysis"
+output: html_notebook
+---
+
+## Fuel Economy Dataset
+
+## Install packages
+
+```{r, echo=TRUE}
+# run this command if before loading. need to do this only once
+# install.packages(tidyverse) 
+
+```
+
+## Load packages
+
+```{r, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(DT)
+
+```
+
+## Load data
+
+```{r}
+dat_mpg <- mpg
+
+```
+
+To read data from an external csv file use
+
+```{r}
+dat_mpg <- read_csv("mpg.csv")
+
+```
+
+## View data
+
+```{r}
+library(knitr)
+DT::datatable(dat_mpg)
+```
+
+## Data description
+```{r}
+# Type '?mpg' in RStudio console - what do you see?
+```
+
+- manufacturer: manufacturer name
+- model: model name
+- displ: engine displacement, in litres
+- year: year of manufacture
+- cyl: number of cylinders
+- trans: type of transmission
+- drv: the type of drive train
+    - f: front-wheel drive
+    - r: rear_wheel drive
+    - 4: 4wd
+- cty: city miles per gallon
+- hwy: highway miles per gallon
+- fl: fuel type
+- class: "type" of car
+
+## Data summary
+
+```{r}
+dat_mpg %>% summary()
+
+```
+## Data quality assessment 
+
+- Missing values
+- Outliers
+- Domain-specific errors
+- **Important**: Data governance and quality control 
+  - Garbage in garbage out
+
+### Count of missing values in 'hwy'
+
+```{r}
+dat_mpg %>% pull(hwy) %>% is.na() %>% sum()
+```
+### Count of missing values in all variables
+
+```{r}
+dat_mpg %>% summarise_all(., ~sum(is.na(.)))
+```
+
+## Visualization
+
+### Manufacturer
+```{r}
+ggplot() + 
+  geom_bar(data = dat_mpg, 
+           mapping = aes(x = manufacturer, fill = manufacturer)) + 
+  theme(legend.position = 'none',
+    text = element_text(size = 12),
+        axis.text.x = element_text(angle = 90),
+    )
+```
+
+### Highway miles per gallon
+
+```{r}
+ggplot() + 
+  geom_histogram(data = dat_mpg, 
+                 mapping = aes(x=hwy), 
+                 color="black", bins = 10) +
+  theme(text = element_text(size = 20)) 
+```
+
+```{r}
+dat_mpg %>% select(hwy) %>% summary()
+```
+### Highway mpg vs. Transmission type 
+
+```{r}
+dat_mpg %>% dplyr::group_by(trans) %>% summarise(n = n()) %>% kable()
+```
+
+```{r}
+ggplot() + geom_bar(data = dat_mpg, 
+                    mapping = aes(x=trans, fill = trans)) +
+  theme(legend.position = "none", 
+        text = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
+```
+
+
+#### Data transformation
+```{r}
+dat_mpg <- dat_mpg %>% 
+  mutate(
+    trans_binary = ifelse(startsWith(trans, "auto"), "auto", "manual")
+  )
+
+dat_mpg %>% dplyr::group_by(trans_binary) %>% 
+  summarise(n = n())
+```
+
+```{r}
+ggplot() + geom_bar(data = dat_mpg, 
+                    mapping = aes(x=trans_binary, fill = trans_binary)) +
+  theme(legend.position = "none", 
+        text = element_text(size = 20),
+        axis.text.x = element_text(angle = 90))
+```
+
+
+```{r}
+ggplot() + 
+  geom_histogram(data = dat_mpg, 
+                 mapping = aes(x = hwy, fill = trans_binary),
+                 color = "black", 
+                 alpha = 0.5) +
+  theme(text = element_text(size = 12), 
+        legend.position = "top") 
+```
+#### Boxplot 
+
+```{r}
+ggplot() + 
+  geom_boxplot(data = dat_mpg, 
+               mapping = aes(x = trans_binary, y = hwy, fill= trans_binary)) +
+  theme(text = element_text(size = 12), legend.position = "top") 
+```
+```{r}
+dat_mpg %>% group_by(trans_binary) %>% summarise(mean = mean(hwy), sd = sd(hwy), n = n())
+```
+
+## Exercise
+
+- Highway mpg vs. drv
+- Repeat analysis with city mpg
+- Highway mpg vs. City mpg
+
+### Submit by Sep 05, 2023
+
+- 
