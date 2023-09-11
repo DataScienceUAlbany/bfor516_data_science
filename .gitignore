@@ -47,3 +47,14 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# lecture recordings folder
+lecture_recordings/
+
+# slides folder
+slides/
+
+# syllabus folder
+syllabus/
+
+
