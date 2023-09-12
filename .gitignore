@@ -59,3 +59,6 @@ syllabus/
 
 # ignore html files
 *.html
+
+# ignore nb.html files
+*nb.html

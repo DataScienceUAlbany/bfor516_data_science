@@ -1765,37 +1765,55 @@ library(&quot;nycflights13&quot;)</code></pre>
 <h2>Load flights data</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KERUKVxubGlicmFyeShcIm55Y2ZsaWdodHMxM1wiKVxuYGBgIn0= -->
-<pre class="r"><code>library(tidyverse)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KERUKVxubGlicmFyeShcXG55Y2ZsaWdodHMxM1xcKVxuYGBgXG5gYGAifQ== -->
+<pre class="r"><code>```r
+library(tidyverse)
 library(DT)
-library(&quot;nycflights13&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="questions" class="section level2">
-<h2>Questions</h2>
-<p>Find all flights that</p>
-<ul>
-<li>Had an arrival delay of two or more hours</li>
-<li>Flew to Houston (IAH or HOU)</li>
-<li>Were operated by United, American, or Delta</li>
-<li>Departed in summer (July, August, and September)</li>
-<li>Arrived more than two hours late, but didn’t leave late</li>
-<li>Were delayed by at least an hour, but made up over 30 minutes in
-flight</li>
-<li>Departed between midnight and 6 am (inclusive)</li>
-</ul>
-<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a>
-Notebook. When you execute code within the notebook, the results appear
-beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within
-the chunk or by placing your cursor inside it and pressing
-<em>Cmd+Shift+Enter</em>.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0X2ZsaWdodHMgPC0gbnljZmxpZ2h0czEzOjpmbGlnaHRzXG5gYGAifQ== -->
-<pre class="r"><code>dat_flights &lt;- nycflights13::flights</code></pre>
+library(\nycflights13\)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+## Questions
+
+Find all flights that
+
+- Had an arrival delay of two or more hours
+- Flew to Houston (IAH or HOU)
+- Were operated by United, American, or Delta
+- Departed in summer (July, August, and September)
+- Arrived more than two hours late, but didn’t leave late
+- Were delayed by at least an hour, but made up over 30 minutes in flight
+- Departed between midnight and 6 am (inclusive)
+
+
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KERUKVxubGlicmFyeShcXG55Y2ZsaWdodHMxM1xcKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+library(tidyverse)
+library(DT)
+library(\nycflights13\)</code></pre>
+<p>```</p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1811,7 +1829,7 @@ run in the editor is displayed.</p>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiRXhwbG9yYXRvcnkgZGF0YSBhbmFseXNpczogTllDIEZsaWdodHMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCgoKYGBge3IsIGxvYWRfcGFja2FnZXMsIG1lc3NhZ2U9RkFMU0V9CmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KERUKQpsaWJyYXJ5KCJueWNmbGlnaHRzMTMiKQpgYGAKCgojIyBMb2FkIGZsaWdodHMgZGF0YQoKYGBge3J9CmRhdF9mbGlnaHRzIDwtIG55Y2ZsaWdodHMxMzo6ZmxpZ2h0cwpgYGAKCgojIyBRdWVzdGlvbnMKCkZpbmQgYWxsIGZsaWdodHMgdGhhdAoKLSBIYWQgYW4gYXJyaXZhbCBkZWxheSBvZiB0d28gb3IgbW9yZSBob3VycwotIEZsZXcgdG8gSG91c3RvbiAoSUFIIG9yIEhPVSkKLSBXZXJlIG9wZXJhdGVkIGJ5IFVuaXRlZCwgQW1lcmljYW4sIG9yIERlbHRhCi0gRGVwYXJ0ZWQgaW4gc3VtbWVyIChKdWx5LCBBdWd1c3QsIGFuZCBTZXB0ZW1iZXIpCi0gQXJyaXZlZCBtb3JlIHRoYW4gdHdvIGhvdXJzIGxhdGUsIGJ1dCBkaWRu4oCZdCBsZWF2ZSBsYXRlCi0gV2VyZSBkZWxheWVkIGJ5IGF0IGxlYXN0IGFuIGhvdXIsIGJ1dCBtYWRlIHVwIG92ZXIgMzAgbWludXRlcyBpbiBmbGlnaHQKLSBEZXBhcnRlZCBiZXR3ZWVuIG1pZG5pZ2h0IGFuZCA2IGFtIChpbmNsdXNpdmUpCgoKCgpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiAKClRyeSBleGVjdXRpbmcgdGhpcyBjaHVuayBieSBjbGlja2luZyB0aGUgKlJ1biogYnV0dG9uIHdpdGhpbiB0aGUgY2h1bmsgb3IgYnkgcGxhY2luZyB5b3VyIGN1cnNvciBpbnNpZGUgaXQgYW5kIHByZXNzaW5nICpDbWQrU2hpZnQrRW50ZXIqLiAKCmBgYHtyfQpwbG90KGNhcnMpCmBgYAoKQWRkIGEgbmV3IGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqSW5zZXJ0IENodW5rKiBidXR0b24gb24gdGhlIHRvb2xiYXIgb3IgYnkgcHJlc3NpbmcgKkNtZCtPcHRpb24rSSouCgpXaGVuIHlvdSBzYXZlIHRoZSBub3RlYm9vaywgYW4gSFRNTCBmaWxlIGNvbnRhaW5pbmcgdGhlIGNvZGUgYW5kIG91dHB1dCB3aWxsIGJlIHNhdmVkIGFsb25nc2lkZSBpdCAoY2xpY2sgdGhlICpQcmV2aWV3KiBidXR0b24gb3IgcHJlc3MgKkNtZCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLiAKClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4KCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiRXhwbG9yYXRvcnkgZGF0YSBhbmFseXNpczogTllDIEZsaWdodHMiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCgoKCmBgYHtyLCBsb2FkX3BhY2thZ2VzLCBtZXNzYWdlPUZBTFNFfQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShEVCkKbGlicmFyeSgibnljZmxpZ2h0czEzIikKYGBgCgoKIyMgTG9hZCBmbGlnaHRzIGRhdGEKCmBgYHtyfQpkYXRfZmxpZ2h0cyA8LSBueWNmbGlnaHRzMTM6OmZsaWdodHMKYGBgCgoKIyMgUXVlc3Rpb25zCgpGaW5kIGFsbCBmbGlnaHRzIHRoYXQKCi0gSGFkIGFuIGFycml2YWwgZGVsYXkgb2YgdHdvIG9yIG1vcmUgaG91cnMKLSBGbGV3IHRvIEhvdXN0b24gKElBSCBvciBIT1UpCi0gV2VyZSBvcGVyYXRlZCBieSBVbml0ZWQsIEFtZXJpY2FuLCBvciBEZWx0YQotIERlcGFydGVkIGluIHN1bW1lciAoSnVseSwgQXVndXN0LCBhbmQgU2VwdGVtYmVyKQotIEFycml2ZWQgbW9yZSB0aGFuIHR3byBob3VycyBsYXRlLCBidXQgZGlkbuKAmXQgbGVhdmUgbGF0ZQotIFdlcmUgZGVsYXllZCBieSBhdCBsZWFzdCBhbiBob3VyLCBidXQgbWFkZSB1cCBvdmVyIDMwIG1pbnV0ZXMgaW4gZmxpZ2h0Ci0gRGVwYXJ0ZWQgYmV0d2VlbiBtaWRuaWdodCBhbmQgNiBhbSAoaW5jbHVzaXZlKQoKCgoKVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gCgpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwcmVzc2luZyAqQ21kK1NoaWZ0K0VudGVyKi4gCgpgYGB7cn0KcGxvdChjYXJzKQpgYGAKCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDbWQrT3B0aW9uK0kqLgoKV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDbWQrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4gCgpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuCgoKCg==</div>
 
 
 
