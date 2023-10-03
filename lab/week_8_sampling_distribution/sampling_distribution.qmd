@@ -36,6 +36,7 @@ for(i in 1:M){
 xbar_df <-xbar_df %>% 
   bind_rows(data.frame('xbar' = xbar, 'N' = as.character(N)))
 
+
 N = 32
 xbar = NA
 for(i in 1:M){
@@ -181,3 +182,5 @@ Thus, $10.9941 \leq \mu \leq 11.0019$
 - Thus, with 95% confidence we can conclude that the population mean is between 10.9941 and 11.0019 inches.
 
 #### How will you construct a 99% confidence interval?
+
+- Homework

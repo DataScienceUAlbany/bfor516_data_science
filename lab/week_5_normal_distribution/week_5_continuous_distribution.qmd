@@ -1,0 +1,158 @@
+---
+title: "Continuous Distribution"
+author: Satish Iyengar
+format: html
+editor: visual
+---
+
+## Load packages
+
+```{r, message=FALSE}
+library(tidyverse)
+library(plotly)
+```
+
+
+## Normal distribution
+
+Let $X$ be a Gaussian distributed random variable, $X \sim \mathcal{N}(\mu, \sigma^2)$.
+The probability density function (PDF) of $X$, $f_X(x)$, can be given as 
+\begin{eqnarray}
+  f_X(x) = \frac{1}{\sqrt(2 \pi \sigma^2)} \exp{\left(-\frac{1}{2\sigma^2}(x - \mu^2) \right)},  \hspace{5pt} x\in (-\infty, \infty)
+  
+\end{eqnarray}
+
+To plot PDF of $X$, 
+
+```{r}
+x <- seq(-10, 10, by = 0.01)
+mu <- 0
+var <- 1
+
+f <- dnorm(x, mu, sqrt(var))
+dat_normpdf <- data.frame('x' = x, 'f' = f)
+ggplot(dat_normpdf, aes(x = x, y = f)) + geom_line(size = 3) + 
+  theme(axis.text = element_text(size = 20))
+```
+
+### Location of the distribution ($\mu$)
+
+
+```{r}
+MU    <- c(-5, 0, 5)
+sigma <- sqrt(1)
+
+dat_normpdf <- data.frame('x' = NA,'f' = NA, 'mu' = NA, 'sigma' = NA)
+for(i in 1:length(MU)){
+  mu <- MU[i]
+  f <- dnorm(x, mu, sigma)
+  tmp <- data.frame('x' = x,'f'=f, 'mu'= as.factor(mu), 'sigma' = sigma)
+  dat_normpdf <- dat_normpdf %>%
+    bind_rows(tmp)
+  rm(tmp)
+}
+
+dat_normpdf <- dat_normpdf %>% drop_na()
+```
+
+```{r}
+p <- ggplot(dat_normpdf, aes(x = x, y = f, color = mu)) + geom_line(size = 3)
+p + theme(axis.text = element_text(size = 20))
+```
+
+### Spread of the distribution ($\sigma$)
+
+```{r}
+MU    <- c(0)
+SIGMA <- round(c(sqrt(1), sqrt(5), sqrt(10)), digits = 2)
+
+dat_normpdf <- data.frame('x' = NA,'f' = NA, 'mu' = NA, 'sigma' = NA)
+
+for(i in 1:length(SIGMA)){
+  mu <- MU
+  sigma <- SIGMA[i]
+  f <- dnorm(x, mu, sigma)
+  tmp <- data.frame('x' = x,'f'=f, 'mu'= as.factor(mu), 'sigma' = as.factor(sigma))
+  dat_normpdf <- dat_normpdf %>%
+    bind_rows(tmp)
+  rm(tmp)
+}
+
+dat_normpdf <- dat_normpdf %>% drop_na()
+```
+
+```{r}
+p <- ggplot(dat_normpdf, aes(x = x, y = f, color = sigma)) + geom_line(size = 3)
+p + theme(axis.text = element_text(size = 20))
+```
+
+## Uniform Distribution
+
+
+Let $X$ be a Gaussian distributed random variable, $X \sim \mathcal{U}(a, b)$.
+The probability density function (PDF) of $X$, $f_X(x)$, can be given as 
+\begin{eqnarray}
+  f_X(x) = \frac{1}{\left(b - a \right)},  \hspace{5pt} x\in (a, b)
+\end{eqnarray}
+
+To plot PDF of $X$, 
+
+```{r}
+# Define parameters of the uniform distribution U(a, b)
+a <- 1
+b <- 4
+
+# x is a vector with different values of x
+x <-  seq(0, 5, by = 0.001)
+# we use the function dunif to compute pdf at all values of x
+f <- dunif(x, min = a, max = b)
+# store values of x and f in a dataframe
+dat_unifpdf <- data.frame('x' = x, 'f' = f)
+
+# Use ggplot to plot the density curve
+
+p1 <- ggplot(dat_unifpdf, aes(x = x, y = f)) + 
+  geom_line(color = "black", linewidth = 2) + 
+  theme(text = element_text(size = 20)) + 
+  xlab('x') + ylab('f(x)')
+
+# Plot CDF 
+Fx <- punif(x, min = a, max = b)
+dat_unifcdf <- data.frame('x'=x,'Fx'=Fx)
+
+p2 <- ggplot(dat_unifcdf, aes(x = x, y = Fx)) + 
+  geom_line(color = "black", linewidth = 2) + 
+  theme(text = element_text(size = 20)) + 
+  xlab('x') + ylab('F(x)') + 
+  geom_vline(xintercept = 2.5, linetype = 'dashed') + 
+  geom_hline(yintercept = 0.5, linetype = 'dashed')
+
+library(patchwork)
+p1/p2
+
+
+## Get 100 samples and plot histogram
+N <- 100
+xn <- runif(n=N, min = a, max = b)
+hist(xn)
+
+N <- 10000
+xn <- runif(n=N, min = a, max = b)
+hist(xn)
+
+  
+```
+
+## Exerices
+
+Suppose we have a cybersecurity system that detects network anomalies, and the response times of normal network requests are normally distributed with a mean of 100 milliseconds and a standard deviation of 20 milliseconds. Can we compute the probability that a network request takes between 80 milliseconds and 120 milliseconds to be processed? Use R/Python or the standard normal table (do web search for the standard normal table)
+
+$$ X \sim \mathcal{N}(\mu = 100, \sigma ^2 = 400)$$
+We want to compute $$P(80\leq X\leq 120) = P(X\leq 120) - P(X\leq 80) = F_X(120)-F_X(80). $$
+
+```{r}
+pnorm(120, mean = 100, sd = sqrt(400)) - pnorm(80, mean = 100, sd = sqrt(400)) 
+```
+
+
+

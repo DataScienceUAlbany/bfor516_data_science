@@ -1,0 +1,248 @@
+---
+title: "week_8_sampling_distribution"
+format: html
+editor: visual
+---
+
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+## Sampling distribution
+
+### Data
+
+```{r}
+organization = c('A', 'B', 'C', 'D')
+delay <- c(3, 2, 1, 4)
+x <- data.frame('organization' = organization, 'delay' = delay)
+p1 <- ggplot(x, aes(x=delay)) + geom_histogram()
+
+```
+
+```{r}
+pop_mean <- mean(delay)
+pop_mean
+
+pop_sd <- sd(delay)
+pop_sd
+```
+
+
+### Randomly selecting two out of four
+
+```{r}
+x <- expand.grid('x1' = delay, 'x2' = delay)
+x$sample_mean <- rowMeans(x) 
+p2 <- ggplot(x, aes(x=sample_mean)) + geom_histogram()
+
+x %>% 
+  bind_cols(expand.grid('o1' = organization, 
+                        'o2' = organization)) %>% 
+  select(o1, o2, everything()) %>%
+  knitr::kable()
+
+x %>% 
+  summarise(
+    mean_sample_mean = mean(sample_mean),
+    sd_sample_mean = sd(sample_mean)
+    ) %>% 
+  mutate(
+    pop_mean = pop_mean,
+    pop_sd = pop_sd    
+  ) 
+
+
+
+
+```
+
+
+- Variations in sample mean less when compared to individual values in the population
+
+
+
+### Randomly selecting 3 out of 4
+
+```{r}
+x <- expand.grid('x1' = delay, 'x2' = delay, 'x3' = delay)
+x$sample_mean <- rowMeans(x) 
+p3 <- ggplot(x, aes(x=sample_mean)) + geom_histogram()
+
+x %>% 
+  bind_cols(expand.grid('o1' = organization, 
+                        'o2' = organization,
+                        'o3' = organization)) %>% 
+  select(o1, o2, o3, everything()) %>%
+  knitr::kable()
+
+x %>% 
+  summarise(
+    mean_sample_mean = mean(sample_mean),
+    sd_sample_mean = sd(sample_mean)
+    ) %>% 
+  mutate(
+    pop_mean = pop_mean,
+    pop_sd = pop_sd
+  ) 
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+library(patchwork)
+p1/p2/p3
+```
+
+### Sampling from a Normally Distributed Population
+
+$$ X \sim \mathcal{N}(\mu = 2, \sigma^2 = 4)$$
+Sample from the above distribution 500 times for N = 2, N = 8 and N = 32, and examine sampling distributions.
+
+
+```{r}
+pop_mean <- 2
+pop_sd <- 2
+
+M = 500
+
+N = 2
+xbar = NA
+for(i in 1:M){
+  xbar[i] <- mean(rnorm(N, mean = pop_mean, sd = pop_sd))
+}
+xbar_df <- data.frame('xbar' = xbar, 'N' = as.character(N))
+
+N = 8
+xbar = NA
+for(i in 1:M){
+  xbar[i] <- mean(rnorm(N, mean = pop_mean, sd = pop_sd))
+}
+xbar_df <-xbar_df %>% 
+  bind_rows(data.frame('xbar' = xbar, 'N' = as.character(N)))
+
+N = 32
+xbar = NA
+for(i in 1:M){
+  xbar[i] <- mean(rnorm(N, mean = pop_mean, sd = pop_sd))
+}
+xbar_df <-xbar_df %>% 
+  bind_rows(data.frame('xbar' = xbar, 'N' = as.character(N)))
+
+p <- ggplot(xbar_df, aes(x = xbar, fill = N)) + geom_density(alpha = 0.4)
+
+p + theme(legend.position = 'top', 
+          text = element_text(size=20)) + xlim(c(-4, 8)) + 
+  geom_vline(xintercept = pop_mean, linetype = 'dashed')
+
+```
+
+
+- Sampling distributions for all N are centered around the population mean
+- Variance of sample means decreases with increase in N
+
+### Sampling from a non-Normally Distributed Population
+
+$$ X \sim \mathcal{exp}(r=1)$$
+Sample from the above distribution 500 times for N = 2, N = 8 and N = 32, and examine sampling distributions.
+
+
+```{r}
+r = 1
+M = 500
+
+N = 2
+xbar = NA
+for(i in 1:M){
+  xbar[i] <- mean(rexp(N, rate = r))
+}
+xbar_df <- data.frame('xbar' = xbar, 'N' = as.character(N))
+
+N = 8
+xbar = NA
+for(i in 1:M){
+  xbar[i] <- mean(rexp(N, rate = r))
+}
+xbar_df <-xbar_df %>% 
+  bind_rows(data.frame('xbar' = xbar, 'N' = as.character(N)))
+
+N = 32
+xbar = NA
+for(i in 1:M){
+  xbar[i] <- mean(rexp(N, rate = r))
+}
+xbar_df <-xbar_df %>% 
+  bind_rows(data.frame('xbar' = xbar, 'N' = as.character(N)))
+
+p <- ggplot(xbar_df, aes(x = xbar, fill = N)) + geom_density(alpha = 0.4)
+
+p + theme(legend.position = 'top', 
+          text = element_text(size=20)) + xlim(c(-2, 5)) +
+  geom_vline(xintercept = 1/r, linetype = 'dashed')
+
+```
+
+
+
+## Central limit theorem
+Let $X_1, X_2, \ldots , X_n$ denote a random sample of $n$ independent observations from a population with expected value $\mu$ and finite variance $\sigma ^{2}$, and let ${\displaystyle {\bar {X}}_{n}}$ denote the sample mean of that sample (which is itself a random variable). Then the limit as $n \to \infty$, the distribution of 
+$${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}},}$$ where 
+${\displaystyle \sigma _{{\bar {X}}_{n}}={\frac {\sigma }{\sqrt {n}}},}$ is the standard normal distribution. That is,
+
+$${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \sim \mathcal{N}(0, 1) $$
+
+### Expected value and variance of sample mean
+
+\begin{eqnarray}
+ E[\bar{X}] & = & E\left[\frac{1}{N} \sum_{i=1}^N x_i\right] \\
+ & = & \frac{1}{N}\left[\sum_{i=1}^N E[x_i]\right] \\
+ & = & \frac{1}{N} N \mu \\
+ & = & \mu
+ \end{eqnarray}
+ 
+ \begin{eqnarray}
+ \sigma^2_{\bar{X}} = Var[\bar{X}] & = & Var\left[\frac{1}{N} \sum_{i=1}^N x_i\right] \\
+ & = & \left(\frac{1}{N}\right)^2\left[\sum_{i=1}^N Var[x_i]\right] \\
+ & = & \left(\frac{1}{N}\right)^2 N \sigma^2 \\
+ & = & \frac{1}{N}\sigma^2
+ \end{eqnarray}
+ 
+ Therefore, the standard deviation, 
+ $\sigma_{\bar{x}} = \frac{1}{\sqrt{N}} \cdot \sigma$
+ 
+
+## Confidence Interval Estimation
+ 
+ $${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \sim \mathcal{N}(0, 1) $$
+ 
+ For a standard normal distribution we know that 
+ $$ Pr(-1.96 \leq Z \leq 1.96) = 0.95$$.
+ 
+ 
+That is,
+ 
+ $$P\left({\displaystyle {-1.96 \leq \frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \leq 1.96 \right) = 0.95$$
+ 
+Now,
+
+\begin{eqnarray}
+-1.96 & \leq & \frac {{\bar{X}}_{n}-\mu }{\sigma_{{\bar{X}}_{n}}}\\
+\implies -1.96 \cdot {\sigma_{{\bar{X}}_{n}}} & \leq & \bar{X}_n - \mu \\
+\implies \mu & \leq & \bar{X}_n + 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}}
+\end{eqnarray}
+
+and 
+
+\begin{eqnarray}
+\frac {{\bar{X}}_{n}-\mu }{\sigma_{{\bar{X}}_{n}}} & \leq & 1.96 \\
+\implies \bar{X}_n - 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}} \leq \mu
+\end{eqnarray}
+
+Thus, rewriting the probability equation we get,
+
+\begin{eqnarray}
+P\left(\bar{X}_n - 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}} \leq \mu \leq \bar{X}_n + 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}}\right) = 0.95
+\end{eqnarray}
+
+

@@ -1,0 +1,91 @@
+---
+title: "Flights Data Analysis"
+format: 
+  html:
+    theme: journal
+author: Satish Iyengar
+---
+
+## Questions
+
+Find all flights that -
+
+  - Had an arrival delay of two or more hours
+  - Flew to Houston (IAH or HOU)
+  - Were operated by United, American, or Delta
+  - Departed in summer (July, August, and September)
+  - Arrived more than two hours late, but didn’t leave late
+  - Were delayed by at least an hour, but made up over 30 minutes in flight
+  - Departed between midnight and 6 am (inclusive)
+
+
+
+## Load packages
+
+```{r, message=FALSE}
+library(nycflights13)
+library(tidyverse)
+```
+
+## Read and view data
+
+```{r}
+dat_flights <- nycflights13::flights 
+dim(dat_flights)
+dat_flights %>% head() %>% knitr::kable()
+```
+
+## Data description
+
+- year, month, day: Date of departure
+- dep_time, arr_time: Actual departure and arrival times (HHMM or HMM), local tz
+- sched_dep_time, sched_arr_time: Scheduled departure and arrival times (HHMM or HMM), local tz
+
+- dep_delay, arr_delay: Departure and arrival delays, in minutes. Negative times represent early departures/arrivals.
+
+- carrier: Two letter carrier abbreviation. See airlines to get name.
+
+- flight: Flight number.
+
+- tailnum: Plane tail number. See planes for additional metadata.
+
+- origin, dest: Origin and destination. See airports for additional metadata.
+
+- air_time: Amount of time spent in the air, in minutes.
+
+- distance: Distance between airports, in miles.
+
+- hour, minute: Time of scheduled departure broken into hour and minutes.
+
+- time_hour: Scheduled date and hour of the flight as a POSIXct date. Along with origin, can be used to join flights data to weather data.
+
+## Question 1: Flights with arrival delay of two or more hours
+
+```{r}
+dat_arr_delay_2hrs_or_more <- 
+  dat_flights %>% dplyr::filter(arr_delay >= 120)
+str(dat_arr_delay_2hrs_or_more) 
+```
+
+## Question 2: Flew to Houston (IAH or HOU)
+
+```{r}
+dat_to_IAH_HOU <- dat_flights %>% 
+  dplyr::filter(dest %in% c('IAH','HOU'))
+dat_to_IAH_HOU %>% select(dest) %>% table()
+```
+
+## Question 3: Were operated by United, American, or Delta
+
+```{r}
+nycflights13::airlines
+```
+
+
+```{r}
+dat_AA_Delta_United <- 
+  dat_flights %>% dplyr::filter(carrier %in% c('AA','DL','UA'))
+dat_AA_Delta_United %>% dplyr::select(carrier) %>% table()
+```
+
+

@@ -1,0 +1,43 @@
+---
+title: "week_4_exploratory_data_analysis_2"
+author: "Satish Iyengar"
+format: html
+editor: visual
+---
+
+
+
+```{r, load_packages, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(DT)
+library("nycflights13")
+```
+
+## Questions
+
+Find all flights that
+
+- Had an arrival delay of two or more hours
+- Flew to Houston (IAH or HOU)
+- Were operated by United, American, or Delta
+- Departed in summer (July, August, and September)
+- Arrived more than two hours late, but didn’t leave late
+- Were delayed by at least an hour, but made up over 30 minutes in flight
+- Departed between midnight and 6 am (inclusive)
+
+
+## Load flights data
+
+```{r, echo=TRUE}
+dat_flights <- nycflights13::flights
+
+```
+
+
+
+
+## View data
+
+```{r, echo=TRUE}
+dat_flights %>% head() %>% knitr::kable()
+```
