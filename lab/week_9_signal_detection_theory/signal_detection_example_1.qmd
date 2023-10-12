@@ -1,0 +1,297 @@
+---
+title: "Signal Detection Theory"
+author: Satish G. Iyengar
+format: html
+editor: visual
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+
+```
+
+## DC signal detection in presence of Gaussian noise
+
+-   Simplest case
+    -   Deterministic signal
+    -   Noise PDF is known
+
+### Signal and Noise models
+
+```{=tex}
+\begin{eqnarray}
+H_0: x(n) & = & w(n), \hspace{5 pt} n = 1, 2, \ldots, k \\
+H_1: x(n) & = & A + w(n), \hspace{5 pt} n = 1, 2, \ldots, k
+\end{eqnarray}
+```
+$$
+W \sim \mathcal{N}(\mu_w =0, \sigma_w^2 =1)
+$$
+
+### DC signal
+
+```{r}
+# Signal model
+A = 0.5
+k <- 10
+
+s <- rep(A, k)
+
+dat <- data.frame('n' = seq(1, k), 's' = s)
+
+```
+
+```{r}
+ylimits <- c(-4,4)
+p1 <- ggplot(dat, aes(x=n, y = 0)) + geom_line(linewidth = 2) + ylim(ylimits) + 
+  ylab('x(n)') + xlab('n') + ggtitle('H0: No signal')
+
+p2 <- ggplot(dat, aes(x=n, y = A)) + geom_line(linewidth = 2) + ylim(ylimits) + 
+  ylab('x(n)') + xlab('n') + ggtitle('H1: Signal present')
+
+p1 + p2
+
+
+```
+
+### Signal contaminated by noise
+
+```{r}
+# Noise model: W ~ N(0, 1)
+mu_w <- 0
+var_w <- 1
+sd_w <- sqrt(var_w)
+w <- rnorm(k, mean = mu_w, sd = sd_w)
+
+dat <- dat %>% bind_cols('w' = w)
+
+# Signal + noise
+x <- s + rnorm(k, mean = mu_w, sd = sd_w)
+dat <- dat %>% bind_cols('x' = x)
+
+```
+
+```{r}
+p1 <- ggplot(dat, aes(x=n, y = w)) + geom_line() + ylim(ylimits) +
+  ylab('')
+#+
+#  ggtitle("H0: Noise only")
+p2 <- ggplot(dat, aes(x=n, y = x)) + geom_line() + ylim(ylimits) +
+  ylab('')
+#+ 
+ # ggtitle("H1: Signal + Noise")
+p1 + p2
+
+```
+
+### 
+
+```{r}
+dat %>% select(w, x) %>% colMeans()
+
+```
+
+```{r}
+dat <- dat %>% 
+  bind_cols('mean_w' = dat %>% pull(w) %>% mean()) %>%
+  bind_cols('mean_x' = dat %>% pull(x) %>% mean())
+
+```
+
+
+```{r}
+p1 <- p1 + geom_hline(yintercept = dat %>% pull(w) %>% mean(),
+                      linetype = 'dashed', col = "blue") +
+  ggtitle(paste0("H0: Noise only, ", 'mean =', 
+                   dat %>% pull(w) %>% mean() %>%
+                   round(., digits = 3))) +
+  ylim(ylimits) 
+
+p2 <- p2 + geom_hline(yintercept = dat %>% pull(x) %>% mean(),
+                      linetype = 'dashed', col = "red") +
+  ggtitle(paste0("H0: Noise only, ", 'mean =', 
+                   dat %>% pull(x) %>% mean() %>%
+                   round(., digits = 3))) +
+  ylim(ylimits) 
+
+p1 + p2
+
+```
+
+## Detector Logic
+
+Reject the null hypothesis $H_0$ of no signal present if,
+
+$$
+T(x_1, x_2, \ldots, x_k) = \bar{X} = \frac{1}{k}\sum_{i=1}^k x_i > \eta.
+$$ Otherwise, accept the null hypothesis $H_0$ of no signal present.
+
+## Mean Detector: Performance Analysis
+
+### Metrics
+
+-   Decide $H_0$ given $H_0$ is true
+
+    - $P(Decide$ $H_0$ $|$ $truth$ $is$ $H_0)$: Probability of correct rejection $(P_{CR})$
+
+    - Also known as $True \hspace{1pt} Negative$ $(TN)$
+
+-   Decide $H_1$ given $H_0$ is true
+
+    - $P(Decide$ $H_1$ $|$ $truth$ $is$ $H_0)$: Probability of false alarm $(P_{F})$
+
+    - Also known as $False \hspace{1pt} Positive$ $(FP)$
+
+-   Decide $H_0$ given $H_1$ is true
+
+    - $P(Decide$ $H_0$ $|$ $truth$ $is$ $H_1)$: Probability of miss $(P_{M})$
+    
+    - Also known as $False \hspace{1pt} Negative$ $(FN)$
+
+-   Decide $H_1$ given $H_1$ is true
+
+    - $P(Decide$ $H_1$ $|$ $truth$ $is$ $H_1)$: Probability of detection $(P_D)$
+    
+    - Also known as $True \hspace{1pt} Positive$ $(TP)$
+
+###
+
+### Confusion matrix
+
+###
+
+![](conf_matrix.png){width="418"}
+
+### 
+
+
+- $P_D = 1 - P_M$ 
+
+- $P_F = 1 - P_{CR}$
+
+### Goal: Design a detector to maximize $P_D$ while achieving low $P_F$.
+
+
+Let us see how our mean detector performs in terms of this $P_D$ vs. $P_F$ trade off.
+
+
+```{r}
+
+# number of MonteCarlo trials
+repM <- 10000 
+
+# Signal model
+A = 0.5
+k <- 10
+s <- rep(A, k)
+dat <- data.frame('n' = seq(1, k), 's' = s)
+
+# Noise model
+mu_w <- 0
+var_w <- 1
+sd_w <- sqrt(var_w)
+
+#w <- rnorm(k, mean = mu_w, sd = sd_w)
+#dat <- dat %>% bind_cols('w' = w)
+
+# Signal + noise
+#x <- s + rnorm(k, mean = mu_w, sd = sd_w)
+#dat <- dat %>% bind_cols('x' = x)
+#dat <- data.frame('n' = seq(1, k), 's' = s)
+
+
+# Simulate H0 case repM times: estimate PF
+test_statistic_h0 = NA
+for(iM in 1:repM){
+  w <- rnorm(k, mean = mu_w, sd = sd_w)
+  test_statistic_h0[iM] <- mean(w)
+}
+
+# Simulate H1 case repM times: estimate PD
+test_statistic_h1 = NA
+for(iM in 1:repM){
+  x <- A + rnorm(k, mean = mu_w, sd = sd_w)
+  test_statistic_h1[iM] <- mean(x)
+}
+
+dat_sim <- 
+  data.frame('test_statistic' = test_statistic_h0, 
+             'label' = 'H0') %>% 
+  bind_rows(data.frame('test_statistic' = test_statistic_h1, 
+                       'label' = 'H1'))
+
+```
+
+
+### Histogram of the test statistic given $H_0$ is true
+
+```{r}
+ggplot(data = dat_sim %>% filter(label == 'H0'), aes(x=test_statistic, fill = label)) + 
+  geom_density(alpha = 0.4) 
+
+
+```
+
+
+### Detector threshold
+
+Let us choose $\eta = \frac{A}{2}$.
+
+```{r}
+th <- A/2
+
+
+
+ggplot(data = dat_sim %>% filter(label == 'H0'), aes(x=test_statistic, fill = label)) + 
+  geom_density(alpha = 0.4) + 
+  geom_vline(xintercept = th, linetype = 'dashed')
+
+```
+
+```{r}
+pf_est <- sum(test_statistic_h0 > th)/repM
+pf_est
+```
+
+```{r}
+ggplot(data = dat_sim, aes(x=test_statistic, fill = label)) + 
+  geom_density(alpha = 0.4) + 
+  geom_vline(xintercept = th, linetype = 'dashed')
+
+```
+
+```{r}
+pd_est <- sum(test_statistic_h1 > th)/repM
+pd_est
+
+
+```
+
+### Receiver operating characteristic curve
+
+- Scan through all possible values of threshold 
+
+```{r}
+aTh <- seq(-2, 2, by = 0.05)
+PD_est <- NA
+PF_est <- NA
+
+for(i in 1:length(aTh)){
+  th <- aTh[i]
+  PD_est[i] <- sum(test_statistic_h1 > th)/repM
+  PF_est[i] <- sum(test_statistic_h0 > th)/repM
+}
+
+
+dat_perf <- data.frame('th'=aTh, 'PF_est' = PF_est, 'PD_est' = PD_est)
+ggplot(data = dat_perf,
+       aes(x = PF_est, y = PD_est)) + 
+  geom_line() + geom_point() +
+  geom_abline(linetype = 'dashed')
+
+```
+
+
+
