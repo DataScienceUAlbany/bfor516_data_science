@@ -289,9 +289,52 @@ dat_perf <- data.frame('th'=aTh, 'PF_est' = PF_est, 'PD_est' = PD_est)
 ggplot(data = dat_perf,
        aes(x = PF_est, y = PD_est)) + 
   geom_line() + geom_point() +
-  geom_abline(linetype = 'dashed')
+  geom_abline(linetype = 'dashed') + 
+  ggtitle('Receiver Operating Characteristic Curve')
 
 ```
+
+## Questions to answer
+
+- Is mean detector optimal for above problem?
+- Do we have a general framework that we can follow to design optimal detectors for a given problem?
+
+
+## Exercise
+- Repeat the simulation above for A = 1 and A = 1.5. Show all three ROCs on the same plot with clear legends and labels
+
+- epeat the simulation above for k = 15, k = 20, k= 30. Show all three ROCs on the same plot with clear legends and labels
+
+## Deriving an optimal test
+
+### Let us first consider a one sample ($k=1$) case
+
+\begin{eqnarray}
+H_0: x[1] & = & w[1] \\
+H_1: x[1] &= & A + w[1]
+\end{eqnarray}
+
+The PDFs under $H_0$ and $H_1$ can be written as
+
+\begin{eqnarray}
+p(x[1]|H_0) & = & \frac{1}{\sqrt{2\pi}}exp\left({-\frac{1}{2}x[1]^2}\right), \\
+p(x[1]|H_1) & = & \frac{1}{\sqrt{2\pi}}exp\left({-\frac{1}{2}\left(x[1] - A\right)^2}\right)
+\end{eqnarray}
+
+The likelihood ratio test (LRT) is then given as
+
+\begin{eqnarray}
+\frac{p(x[1] | H_1)}{p(x[1] | H_0} > \eta, \hspace{5pt} & decide & \hspace{1pt} H_1, \\
+& \text{else decide } & H_0
+\end{eqnarray}
+
+Extending this to $k$ samples, 
+
+\begin{eqnarray}
+\frac{p(x[1] | H_1) \cdot p(x[2] | H_1) \cdots p(x[k] | H_1)}{p(x[1] | H_0) \cdot p(x[2] | H_0) \cdots p(x[k] | H_0)} > \eta, \hspace{5pt} & decide & \hspace{1pt} H_1, \\
+& \text{else decide } & H_0
+\end{eqnarray}
+
 
 
 
