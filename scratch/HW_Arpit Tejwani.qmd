@@ -1,0 +1,83 @@
+---
+title: "HW1"
+format: html
+editor: visual
+---
+
+## Answer 1
+
+A bar plot, also known as a bar chart or bar graph, is a graphical representation of data that uses rectangular bars or columns to display information. It is commonly used to visualize and compare categorical data or data that can be divided into distinct categories or groups.
+
+In a bar plot:
+
+The vertical axis (y-axis) typically represents a numerical value or frequency, while the horizontal axis (x-axis) represents the categories or groups being compared.
+
+Each bar in the plot corresponds to a category or group, and the height or length of the bar is proportional to the value or frequency associated with that category. The bars can be oriented either vertically (column chart) or horizontally (horizontal bar chart).
+
+Bar plots are particularly useful for comparing values across different categories, showing trends, and identifying relative differences between categories.
+
+## Load packages
+
+```{r, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(DT)
+
+```
+
+## Load data
+
+```{r}
+dat_mpg <- mpg
+
+```
+
+To read data from an external csv file use
+
+```{r}
+dat_mpg <- read_csv("mpg.csv")
+
+```
+
+## View data
+
+```{r}
+library(knitr)
+DT::datatable(dat_mpg)
+```
+
+```{r}
+ggplot() + 
+  geom_bar(data = dat_mpg, 
+           mapping = aes(x = drv, fill = drv)) + 
+  theme(legend.position = 'none',
+    text = element_text(size = 12),
+        axis.text.x = element_text(angle = 90),
+    )
+```
+
+## Answer 2
+
+A histogram is a graphical representation of the distribution of a dataset. It is commonly used to visualize the frequency or density of data points within various intervals or bins of a continuous variable. Histograms provide valuable insights into the underlying data distribution and can help identify patterns, central tendencies, and the spread of data.
+
+```{r}
+ggplot(dat_mpg, aes(x = hwy, fill = drv)) +
+  geom_histogram(binwidth = 2, position = "dodge") +
+  labs(title = "Histograms of Highway MPG by Drive Type", x = "Highway MPG", y = "Frequency") +
+  scale_fill_manual(values = c("4" = "red", "f" = "blue", "r" = "green")) +
+  theme_minimal()
+```
+
+## Answer 3
+
+A box plot, also known as a box-and-whisker plot, is a graphical representation of the distribution of a dataset. It provides a summary of key statistical characteristics, allowing for a quick visual assessment of data distribution, central tendency, variability, and the presence of outliers.
+
+```{r}
+ggplot(dat_mpg, aes(x = drv, y = hwy)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of Highway MPG by Drive Type",
+       x = "Drive Type",
+       y = "Highway MPG")
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

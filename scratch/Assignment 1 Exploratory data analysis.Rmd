@@ -1,0 +1,76 @@
+---
+title: 'Assignment 1: Exploratory data analysis'
+output: html_document
+date: "2023-09-18"
+---
+
+
+## Install packages
+
+```{r, echo=TRUE}
+# run this command if before loading. need to do this only once
+# install.packages(tidyverse) 
+
+```
+# Set your working directory to where the CSV files are located
+setwd("D:\School\BFOR 516 (Data Analytics for Cyber Sec) O")
+
+## Load packages
+
+```{r, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(DT)
+
+```
+
+
+
+## Load the datasets
+To read data from an external csv file use
+
+```{r}
+dat_mpg <- read.csv("D:/School/BFOR 516 (Data Analytics for Cyber Sec) O/mpg.csv")
+```
+
+## View data
+
+```{r}
+library(knitr)
+DT::datatable(dat_mpg)
+```
+
+## 1) What is a barplot? Draw barplot for the 'drv' variable using R or Python.
+
+```{r}
+ggplot() + 
+  geom_bar(data = dat_mpg, mapping = aes(x = drv, fill = drv)) + 
+  theme(legend.position = 'none', text = element_text(size = 12), axis.text.x = element_text(angle = 90)) +
+  labs(title = "Barplot for 'drv' Variable")
+```
+
+
+## 2) What is a histogram? Draw histograms for highway miles per gallon - one for each drv type using R/Python. The histograms should be on the same scale for visual comparison.
+```{r}
+ggplot() + 
+  geom_histogram(data = dat_mpg, 
+                 mapping = aes(x = hwy), 
+                 fill="lightblue",
+                 color="black", bins = 10) +
+  facet_wrap(~drv, ncol=3) +
+  theme(text = element_text(size = 20)) +
+  labs (title = "Histograms of Highway MPG by Drive Type")
+```
+
+
+
+## 3)  What is a box plot? Draw box plots for highway miles per gallon variable - one for each drv type in R/Python. The box plots should be on the same scale for visual comparison. What can you conclude from this box plot?
+```{r}
+ggplot() + 
+  geom_boxplot(data = dat_mpg, 
+               mapping = aes(x = drv, y = hwy, fill= drv)) +
+  theme(text = element_text(size = 12), legend.position = "none") +
+  labs(title = "Box Plots of Highway MPG by Drive Type")
+```
+
+

@@ -1,0 +1,49 @@
+
+```{r, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(DT)
+```
+
+```{r}
+dat_mpg <- mpg
+```
+
+```{r}
+dat_drv <- read_csv("mpg.csv")
+```
+
+```{r}
+library(knitr)
+DT::datatable(dat_mpg)
+```
+
+drv: the type of drive train
+- f: front-wheel drive
+- r: rear_wheel drive
+- 4: 4wd
+
+```{r}
+ggplot() + 
+  geom_bar(data = dat_drv, 
+                 mapping = aes(x=drv), 
+                 color="black", bins = 10) +
+  theme(text = element_text(size = 20))
+```
+
+```{r}
+ggplot() + 
+  geom_histogram(data = dat_mpg, 
+                 mapping = aes(x = hwy, fill = drv),
+                 color = "black", 
+                 alpha = 0.5) +
+  theme(text = element_text(size = 12), 
+        legend.position = "top")
+```
+
+```{r}
+ggplot() + 
+  geom_boxplot(data = dat_mpg, 
+               mapping = aes(x = drv, y = hwy, fill= drv)) +
+  theme(text = element_text(size = 12), legend.position = "top") 
+```

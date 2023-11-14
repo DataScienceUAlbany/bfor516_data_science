@@ -1,0 +1,271 @@
+---
+title: "Midterm Solution: Part 1"
+author: "Satish G. Iyengar"
+format: html
+number-sections: true
+editor: visual
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+```
+
+## If the standard deviation of a set of observations is 0, you can conclude
+
+-   that there is no relationship between the observations.
+
+-   that the average value is 0.
+
+-   **that all observations are the same value.**
+
+-   that a mistake in arithmetic has been made.
+
+-   Choice 1 and 3 from above.
+
+-   None of the above.
+
+
+## Professor James gave the same test to three sections of statistics students. On the 35-question test, the highest score was 32 and the lowest was 15. Based on the information displayed in the boxplots above, which of the following statements is true? 
+ 
+- Section 1 has the smallest interquartile range.
+ 
+- The lowest score in Section 2 is higher than the highest score in either of the other sections
+ 
+- Section 2 has the smallest range of scores.
+ 
+- The top 25% of scores in the Section 2 are lower than the highest score in Section 3
+ 
+- **At least 50% of the scores in Section 3 are higher than all of the scores in Section 1.**
+
+## In tossing a fair coin, which of the following sequences is more likely to appear?
+
+- **HHHHH**
+ 
+- HTHTHT
+ 
+- HTHHTTH
+ 
+- All are equally likely.
+
+## A researcher would like to show that a new oral diabetes medication he developed helps control blood sugar level better than insulin injection. He plans to run a hypothesis test at 5% significance level. What would be a false positive?
+ 
+- The researcher concludes he has evidence his new medication helps more than insulin injection, and his medication really is better than insulin injection. 
+ 
+- **The researcher concludes he has evidence his new medication helps more than insulin injection, when in reality his medication is not better than insulin injection.**
+ 
+- The researcher concludes he has no evidence his new medication helps more than insulin injection, and his medication really is not better than insulin injection. 
+ 
+- The researcher concludes he has evidence his new medication controls blood sugar level the same as insulin injection, and in reality there is a difference.
+
+## A researcher would like to show that a new oral diabetes medication he developed helps control blood sugar level better than insulin injection. He plans to run a hypothesis test at 5% significance level. What would be a false negative?
+ 
+- The researcher concludes he has evidence his new medication helps more than insulin injection, and his medication really is better than insulin injection. 
+ 
+- The researcher concludes he has evidence his new medication helps more than insulin injection, when in reality his medication is not better than insulin injection.
+ 
+- **The researcher concludes that he has no evidence his new medication helps more than insulin injections, when in reality his medication is better than insulin injection.**
+ 
+- The researcher concludes he has evidence his new medication controls blood sugar level the same as insulin injection, and in reality there is a difference.
+
+## An analyst determines the yearly research and development investments for 50 blue chip companies. She then transforms the dollar amounts to z-scores. What can be said about the standard deviation of the 50 z-scores?
+ 
+- It depends on the distribution of the raw scores.
+ 
+- **It equals to 1.**
+ 
+- It is equal to the standard deviation of the raw scores. 
+ 
+- It is less than the standard deviation of the raw scores.
+
+
+## Following are the graphs of three probability density functions and three cumulative distribution functions of three normally distributed random variables:
+
+Which normal curve corresponds to which cumulative curve?
+
+*[See BrightSpace for figure associated with this question]*
+
+- **X-1, Y-2, Z-3**
+ 
+- X-1, Y-3, Z-2
+ 
+- X-3, Y-1, Z-2
+ 
+- X-3, Y-2, Z-1
+
+## Determine the number of times I expect to run over the course of a 25 week period, if the following weekly probabilities are accurate:
+
+-   8% chance that I run one time per week
+
+-   17% chance that I run two times per week
+
+-   30% chance that I run three times per week
+
+-   12% chance that I run five times per week
+
+Expected number of runs in one week: $$ 0.08*1 + 0.17*2 + 0.3*3 + 0.12*5 = 1.92 $$
+
+Therefore, over a 25-week period, expected number of runs will be $25*1.92 = 48$.
+
+## Jeff decides to buy a lottery ticket and take his chances at winning a \$900,000 prize. Find his expected earnings if he is one of one million people who decide to play.
+
+-   Probability of winning, p is $$ p  = \frac{1}{1000000} $$
+
+-   Earnings if won = \$900,000
+
+-   Probability of not winning, p is $$ 1 - p  = 1 - \frac{1}{1000000} $$
+
+-   Earnings if not won = \$0
+
+-   Expected earnings, \begin{eqnarray}
+    E[X] & = & $ 900,000 * p + 0 * (1-p) \\
+    & = & $ 900,000*\frac{1}{1000000} \\
+    & = & \frac{9}{10} = 90 \text{ cents}
+    \end{eqnarray}
+
+## You look around and see your dog and approach him, only to realize that the dog is not your dog.
+ 
+- Hit
+ 
+- Miss
+ 
+- **False Alarm**
+ 
+- Correct Rejection
+
+
+## During a vision test, the doctor asks whether you see the letter or not. On the third trial you indicate that you did NOT see the letter, and the doctor confirms that none were displayed.
+ 
+- Miss
+ 
+- **Correct Rejection**
+ 
+- Hit
+ 
+- False Alarm
+
+
+## In a particular neighborhood, 25% of families have 1 child, 45% have 2 children, and 30% have 3 children. If a family is chosen randomly, what is the expected number of children in that family?
+
+Let $X$ be the random variable that denotes number of children per family. Expected number of children can be given as
+
+\begin{eqnarray}
+E[X] & = & 0.25*1 + 0.45*2 + 0.3*3 \\
+& = & `r 0.25*1 + 0.45*2 + 0.3*3`
+\end{eqnarray}
+
+
+## Given the probability model in the table below,
+
+```{r, echo=FALSE}
+dat <- data.frame('X' = c(50, 20, 5), P = c(0.1, 0.3, 0.6))
+dat %>% gt::gt()
+```
+
+- Compute:
+
+  1. Expected Value: $E[X] = 50*0.1 + 20*0.3 + 5*0.6$ = `r 50*0.1 + 20*0.3 + 5*0.6`
+  
+  2. Standard Deviation:
+  \begin{eqnarray}
+  \sigma = \sqrt{Var(X)} = \sqrt{189} = `r sqrt(189)`
+  \end{eqnarray}
+  
+  3. Variance: 
+  \begin{eqnarray}
+  Var(X) & = & E[X^2] - (E[X])^2 \\
+  & = & \left(50^2 * 0.1 + 20^2 * 0.3 + 5^2 * 0.6 \right) - (14)^2 \\
+  & = & `r (50^2 * 0.1 + 20^2 * 0.3 + 5^2 * 0.6) - 14^2 `
+  \end{eqnarray}
+   
+## Suppose that a sample of N = 25 cereal boxes has a mean of 362.3 grams and a standard deviation of 15 grams. Find the 95% confidence interval for the population mean.
+
+```{=tex}
+\begin{eqnarray}
+\bar{X}_n - 1.96 \frac{\sigma}{\sqrt{N}} & \leq & \mu \leq \bar{X} + 1.96 \frac{\sigma}{\sqrt{N}} \\
+362.3 - 1.96 \frac{15}{\sqrt{25}} & \leq & \mu \leq 362.3 + 1.96 \frac{15}{\sqrt{25}} \\
+\end{eqnarray}
+```
+```{r}
+mu_L = 362.3 - 1.96*15/sqrt(25) 
+mu_H = 362.3 + 1.96*15/sqrt(25)
+c(mu_L, mu_H)
+```
+
+## Let X be a random variable with expected value 10, and variance 5. What is the expected value and variance of Y where Y = X - A, A being a constant.
+
+\begin{eqnarray}
+E[Y] & = & E[X - A] = E[X] - E[A] = 10 - A\\
+Var[Y] & = & Var[X - A] = Var[X] + Var[A] = 5 - 0 = 5
+\end{eqnarray}
+
+## The time it takes John to drive to the mall follows a normal distribution with mean 40 minutes and standard deviation 5 minutes, while the time it takes Melissa to drive to the mall follows a normal distribution with mean 25 minutes and standard deviation 4 minutes. Assume their walking times are independent of each other.
+
+(a) If they leave at the same time, what is the probability that John arrives before Melissa?
+
+```{=tex}
+\begin{eqnarray}
+T_J & \sim & \mathcal{N}(\mu_J = 40, \sigma_J = 5) \\
+T_M & \sim & \mathcal{N}(\mu_M = 25, \sigma_J = 4)
+\end{eqnarray}
+```
+```{=tex}
+\begin{eqnarray}
+P(T_J < T_M) & = & P(T_J - T_M < 0)
+\end{eqnarray}
+```
+```{=tex}
+\begin{eqnarray}
+X & = & T_J - T_M \sim \mathcal{N}(40 - 25, \sigma^2 = 5^2 + 4^2) \\
+X & \sim & \mathcal{N}(\mu = 15, \sigma^2 = 41)
+\end{eqnarray}
+```
+Now, we compute $P(X < 0)$ directly as,
+
+```{r}
+Fx <- pnorm(0, mean = 40-25, sd = sqrt(5^2 + 4^2))
+print(Fx)
+```
+
+### Using the standard normal distribution (z-score)
+
+Alternatively, you can convert this into z-score and use the cumulative z-score tables. That is, 
+
+\begin{eqnarray}
+P(X < 0) & = & P\left(Z < \frac{0 - (40-25)}{\sqrt{25+16}}\right) \\
+& = & P\left(Z < -2.34\right)
+\end{eqnarray}
+which is computed as below
+
+```{r}
+Fz <- pnorm(-2.34, mean = 0, sd = 1)
+print(Fz)
+```
+
+
+(b) How much earlier than Melissa should John leave so that he has a 90% chance of arriving before Melissa?
+
+-   Let $m$ be the number of minutes John should leave early.
+-   New mean, $\mu_J = 40 - m$
+
+$$ X \sim \mathcal{N}(15 - m, \sigma^2 = 41) $$ - $90 \%$ chance that $X < 0$ $\implies$ Pr(X \< 0) = 0.9.
+
+From the Z Scores table, the value $z^{'}$ at which $P(Z < z^{'}) = 0.9$ is
+
+```{r}
+z <- qnorm(0.9, mean = 0, sd = 1)
+print(z)
+```
+
+That is,
+
+$$ P\left(Z < \frac{0 - (15 - m)}{\sqrt{41}}\right) = 0.9$$
+
+$$ \frac{m - 15}{\sqrt{41}} = 1.28$$
+
+Therefore, $$m = 1.28 * \sqrt{41} + 15$$
+
+```{r}
+1.28 * sqrt(41) + 15
+```
+

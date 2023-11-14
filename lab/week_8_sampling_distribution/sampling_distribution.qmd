@@ -4,16 +4,13 @@ format: html
 editor: visual
 ---
 
-
 ```{r, message=FALSE}
 library(tidyverse)
 ```
 
 ## Sampling from a Normally Distributed Population
 
-$$ X \sim \mathcal{N}(\mu = 2, \sigma^2 = 4)$$
-Sample from the above distribution 500 times for N = 2, N = 8 and N = 32, and examine sampling distributions.
-
+$$ X \sim \mathcal{N}(\mu = 2, \sigma^2 = 4)$$ Sample from the above distribution 500 times for N = 2, N = 8 and N = 32, and examine sampling distributions.
 
 ```{r}
 pop_mean <- 2
@@ -53,15 +50,12 @@ p + theme(legend.position = 'top',
 
 ```
 
-
-- Sampling distributions for all N are centered around the population mean
-- Variance of sample means decreases with increase in N
+-   Sampling distributions for all N are centered around the population mean
+-   Variance of sample means decreases with increase in N
 
 ## Sampling from a non-Normally Distributed Population
 
-$$ X \sim \mathcal{exp}(r=1)$$
-Sample from the above distribution 500 times for N = 2, N = 8 and N = 32, and examine sampling distributions.
-
+$$ X \sim \mathcal{exp}(r=1)$$ Sample from the above distribution 500 times for N = 2, N = 8 and N = 32, and examine sampling distributions.
 
 ```{r}
 r = 1
@@ -98,89 +92,106 @@ p + theme(legend.position = 'top',
 
 ```
 
-
-
 ## Central limit theorem
 
-Let $X_1, X_2, \ldots , X_n$ denote a random sample of $n$ independent observations from a population with expected value $\mu$ and finite variance $\sigma ^{2}$, and let ${\displaystyle {\bar {X}}_{n}}$ denote the sample mean of that sample (which is itself a random variable). Then the limit as $n \to \infty$, the distribution of 
-$${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}},}$$ where 
-${\displaystyle \sigma _{{\bar {X}}_{n}}={\frac {\sigma }{\sqrt {n}}},}$ is the standard normal distribution. That is,
+Let $X_1, X_2, \ldots , X_n$ denote a random sample of $n$ independent observations from a population with expected value $\mu$ and finite variance $\sigma ^{2}$, and let ${\displaystyle {\bar {X}}_{n}}$ denote the sample mean of that sample (which is itself a random variable). Then the limit as $n \to \infty$, the distribution of $${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}},}$$ where ${\displaystyle \sigma _{{\bar {X}}_{n}}={\frac {\sigma }{\sqrt {n}}},}$ is the standard normal distribution. That is,
 
 $${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \sim \mathcal{N}(0, 1) $$
 
 ### Expected value and variance of sample mean
 
+```{=tex}
 \begin{eqnarray}
  E[\bar{X}] & = & E\left[\frac{1}{N} \sum_{i=1}^N x_i\right] \\
  & = & \frac{1}{N}\left[\sum_{i=1}^N E[x_i]\right] \\
  & = & \frac{1}{N} N \mu \\
  & = & \mu
  \end{eqnarray}
- 
- \begin{eqnarray}
+```
+```{=tex}
+\begin{eqnarray}
  \sigma^2_{\bar{X}} = Var[\bar{X}] & = & Var\left[\frac{1}{N} \sum_{i=1}^N x_i\right] \\
  & = & \left(\frac{1}{N}\right)^2\left[\sum_{i=1}^N Var[x_i]\right] \\
  & = & \left(\frac{1}{N}\right)^2 N \sigma^2 \\
  & = & \frac{1}{N}\sigma^2
  \end{eqnarray}
- 
- Therefore, the standard deviation, 
- $\sigma_{\bar{x}} = \frac{1}{\sqrt{N}} \cdot \sigma$
- 
+```
+Therefore, the standard deviation, $\sigma_{\bar{x}} = \frac{1}{\sqrt{N}} \cdot \sigma$
 
 ## Confidence Interval Estimation
- 
- $${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \sim \mathcal{N}(0, 1) $$
- 
- For a standard normal distribution we know that 
- $$ Pr(-1.96 \leq Z \leq 1.96) = 0.95$$.
- 
- 
+
+$${\displaystyle {\frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \sim \mathcal{N}(0, 1) $$
+
+For a standard normal distribution we know that $$ Pr(-1.96 \leq Z \leq 1.96) = 0.95$$.
+
 That is,
- 
- $$P\left({\displaystyle {-1.96 \leq \frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \leq 1.96 \right) = 0.95$$
- 
+
+$$P\left({\displaystyle {-1.96 \leq \frac {{\bar {X}}_{n}-\mu }{\sigma _{{\bar {X}}_{n}}}}} \leq 1.96 \right) = 0.95$$
+
 Now,
 
+```{=tex}
 \begin{eqnarray}
 -1.96 & \leq & \frac {{\bar{X}}_{n}-\mu }{\sigma_{{\bar{X}}_{n}}}\\
 \implies -1.96 \cdot {\sigma_{{\bar{X}}_{n}}} & \leq & \bar{X}_n - \mu \\
 \implies \mu & \leq & \bar{X}_n + 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}}
 \end{eqnarray}
+```
+and
 
-and 
-
+```{=tex}
 \begin{eqnarray}
 \frac {{\bar{X}}_{n}-\mu }{\sigma_{{\bar{X}}_{n}}} & \leq & 1.96 \\
 \implies \bar{X}_n - 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}} \leq \mu
 \end{eqnarray}
-
+```
 Thus, rewriting the probability equation we get,
 
+```{=tex}
 \begin{eqnarray}
 P\left(\bar{X}_n - 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}} \leq \mu \leq \bar{X}_n + 1.96 \cdot  {\sigma_{{\bar{X}}_{n}}}\right) = 0.95
 \end{eqnarray}
+```
+In general,
 
+```{=tex}
+\begin{eqnarray}
+P\left(\bar{X}_n - z_\alpha \frac{\sigma}{\sqrt{n}} \leq \mu \leq \bar{X}_n + z_\alpha \frac{\sigma}{\sqrt{n}}\right) = \underbrace{1 - \alpha}_{\text{confidence level}}
+\end{eqnarray}
+```
+```{r}
+z <- seq(-5, 5, by = 0.005)
+Fz <- pnorm(z)
+
+plot(z, Fz) + abline(h = 0.025)
+```
 
 ### Example
-- Paper manufacturing facility
-- Paper is expected to have a mean length of 11 inches and standard deviation of 0.02 inch.
-- At periodic intervals, a sample is selected to determine if the mean paper length is 11 inches or something went wrong
-- Say you selected 100 sheets at random and found that the mean length to be 10.998 inches. 
-- What is the 95% confidence interval estimate for the population mean paper length?
 
+-   Paper manufacturing facility
+-   Paper is expected to have a mean length of 11 inches and standard deviation of 0.02 inch.
+-   At periodic intervals, a sample is selected to determine if the mean paper length is 11 inches or something went wrong
+-   Say you selected 100 sheets at random and found that the mean length to be 10.998 inches.
+-   What is the 95% confidence interval estimate for the population mean paper length?
 
-
+```{=tex}
 \begin{eqnarray}
 \bar{X} \text{ +/- } 1.96 \frac{\sigma}{\sqrt{N}} \\ 
 = 10.998 \text{ +/- } (1.96) \cdot \frac{0.02}{\sqrt{100}} \\
 = 10.998 +/- 0.0039
 \end{eqnarray}
-
+```
 Thus, $10.9941 \leq \mu \leq 11.0019$
 
-- Thus, with 95% confidence we can conclude that the population mean is between 10.9941 and 11.0019 inches.
+-   Thus, with 95% confidence we can conclude that the population mean is between 10.9941 and 11.0019 inches.
 
 #### How will you construct a 99% confidence interval?
 
-- Homework
+-   Homework
+
+## Question: What is Var(aX)?
+
+$Y = aX$ \begin{eqnarray}
+Var(Y) & = & E[Y^2] - \left(E[Y]\right)^2 \\
+Var(aX) & = & E[(aX)^2] - \left(E[aX]\right)^2
+\end{eqnarray}

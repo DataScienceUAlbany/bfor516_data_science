@@ -1,0 +1,195 @@
+---
+title: "Homework 4: DC Signal Detection in presence of Noise"
+author: "Satish Iyengar"
+format: html
+editor: visual
+---
+
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+### In class, we solved the following problem for $A = 0.5$: 
+
+```{=tex}
+\begin{eqnarray}
+H_0: x(n) & = & w(n), \hspace{5 pt} n = 1, 2, \ldots, k \\
+H_1: x(n) & = & A + w(n), \hspace{5 pt} n = 1, 2, \ldots, k
+\end{eqnarray}
+```
+$$
+W \sim \mathcal{N}(\mu_w =0, \sigma_w^2 =1)
+$$
+
+
+1) Repeat simulation for A = 1 and A = 1.5. Show all 3 ROCs on the same plot with clear legends and labels. Keep all other parameters fixed $(\mu_w = 0, \sigma^2_w = 1, k=10)$.
+
+
+```{r}
+k <- 10
+
+# Noise model
+mu_w <- 0
+var_w <- 1
+sigma_w <- sqrt(var_w)
+
+# Signal model
+A <- 1.5
+
+```
+
+
+## Probability density function of test statistic under $H_0$ and $H_1$
+
+```{r}
+# Montecarlo runs
+repM <- 10000
+
+test_statistic_H0 <- NA
+test_statistic_H1 <- NA
+for(i in 1:repM){
+  xH0 <- rnorm(n = k, mean = mu_w, sd = sigma_w)
+  xH1 <- A + rnorm(n = k, mean = mu_w, sd = sigma_w)
+  test_statistic_H0[i] <- mean(xH0)
+  test_statistic_H1[i] <- mean(xH1)
+}
+
+dat_test_statistic_H0 <- 
+  data.frame('test_statistic' = test_statistic_H0, 'label' = 'H0')
+
+dat_test_statistic_H1 <- 
+  data.frame('test_statistic' = test_statistic_H1, 'label' = 'H1')
+
+dat_test_statistic <- dat_test_statistic_H0 %>%
+  bind_rows(dat_test_statistic_H1)
+
+rm(dat_test_statistic_H0, dat_test_statistic_H1)
+
+```
+
+
+```{r}
+ggplot(data = dat_test_statistic, mapping = aes(x = test_statistic, fill = label)) + 
+  geom_density(alpha = 0.5)
+
+```
+
+
+## ROC 
+
+```{r}
+aTh <- seq(-4, 4, by = 0.05)
+pf_est <- NA
+pd_est <- NA
+for(i in 1:length(aTh)){
+  th <- aTh[i]
+  pf_est[i] <- sum((dat_test_statistic %>% filter(label=='H0') %>% pull(test_statistic)) > th)/repM
+  pd_est[i] <- sum((dat_test_statistic %>% filter(label=='H1') %>% pull(test_statistic)) > th)/repM
+}
+dat_perf <- data.frame('detection_threshold' = aTh, 'PF_est' = pf_est, 'PD_est' = pd_est)
+
+```
+
+
+```{r}
+ggplot(data = dat_perf, mapping = 
+         aes(x = PF_est, y = PD_est)) + geom_line() + geom_point() +
+  geom_abline(slope = 1, intercept = 0, linetype = 'dashed')
+```
+
+
+
+
+
+
+## ROC for A = 0.5, 1, 1.5
+
+
+```{r}
+roc <- function(mu0, mu1, var0, var1, k, repM){
+  test_statistic_H0 <- NA
+  test_statistic_H1 <- NA
+  for(i in 1:repM){
+    xH0 <- rnorm(n=k, mean=mu0, sd = sqrt(var0))
+    xH1 <- rnorm(n=k, mean=mu1, sd = sqrt(var1))
+    test_statistic_H0[i] <- mean(xH0)
+    test_statistic_H1[i] <- mean(xH1)
+  }
+  dat_test_statistic <- 
+    data.frame('test_statistic' = test_statistic_H0,'label' = 'H0') %>%
+    bind_rows(
+      data.frame('test_statistic' = test_statistic_H1,'label' = 'H1')
+    )
+  
+  aTh <- seq(min(dat_test_statistic$test_statistic, na.rm = T),
+             max(dat_test_statistic$test_statistic, na.rm = T),
+             by = 0.05)
+  
+  pf_est <- NA
+  pd_est <- NA
+  for(iTh in 1:length(aTh)){
+    pf_est[iTh] = sum(dat_test_statistic %>% filter(label == 'H0') %>%
+                        pull(test_statistic) > aTh[iTh])/repM
+    
+    pd_est[iTh] = sum(dat_test_statistic %>% filter(label == 'H1') %>%
+                        pull(test_statistic) > aTh[iTh])/repM
+  }
+  
+  data.frame('eta' = aTh, 'pf_est' = pf_est, 'pd_est' = pd_est)
+}
+
+dat_perf <- roc(mu0 = 0, mu1 = 0.5, var0 = 1, var1 = 1, k = 10, repM = 10000) %>%
+  mutate(
+    case = 'A=0.5'
+  ) %>% 
+  bind_rows(
+    roc(mu0 = 0, mu1 = 1, var0 = 1, var1 = 1, k = 10, repM = 10000) %>%
+      mutate(
+        case = 'A=1'
+      ) ,
+    
+    roc(mu0 = 0, mu1 = 1.5, var0 = 1, var1 = 1, k = 10, repM = 10000) %>%
+      mutate(
+        case = 'A=1.5'
+      )
+    
+  )
+
+ggplot(data = dat_perf, mapping = aes(x = pf_est, y = pd_est, color = case)) + 
+  geom_line(linewidth = 1) + geom_abline(slope = 1, intercept = 0, linetype = 'dashed') 
+
+```
+
+## ROC for k = 10, 15, 20, 30
+
+```{r}
+
+dat_perf <- roc(mu0 = 0, mu1 = 0.5, var0 = 1, var1 = 1, k = 10, repM = 10000) %>%
+  mutate(
+    case = 'k=10'
+  ) %>% 
+  bind_rows(
+    roc(mu0 = 0, mu1 = 0.5, var0 = 1, var1 = 1, k = 15, repM = 10000) %>%
+      mutate(
+        case = 'k=15'
+      ) ,
+    
+    roc(mu0 = 0, mu1 = 0.5, var0 = 1, var1 = 1, k = 20, repM = 10000) %>%
+      mutate(
+        case = 'k=20'
+      ),
+    roc(mu0 = 0, mu1 = 0.5, var0 = 1, var1 = 1, k = 30, repM = 10000) %>%
+      mutate(
+        case = 'k=30'
+      )
+    
+  )
+
+ggplot(data = dat_perf, mapping = aes(x = pf_est, y = pd_est, color = case)) + 
+  geom_line(linewidth = 1) + geom_abline(slope = 1, intercept = 0, linetype = 'dashed') 
+
+```
+

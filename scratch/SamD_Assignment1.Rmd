@@ -1,0 +1,31 @@
+---
+title: "Assignment 1 - Sam Dolled"
+output: html_notebook
+---
+
+1) A bar plot "shows the relationship between a numeric and a categoric variable", as defined in https://www.data-to-viz.com/graph/barplot.html
+
+2) A histogram is "a graphical representation of discrete or continuous data.", as defined by https://www.ncl.ac.uk/webtemplate/ask-assets/external/maths-resources/statistics/data-presentation/histograms.html#:~:text=Definition,of%20values%20divided%20into%20intervals.
+
+3) A box plot uses boxes and lines to depict the distributions of one or more groups of numeric data, as defined by https://chartio.com/learn/charts/box-plot-complete-guide/
+
+Something you can take away from looking at the box plots, is that 4 wheel and rear wheel drive vehicles share around the same highway MPG, whereas forward wheel drive has a higher MPG than the other two.
+
+```{r}
+read.csv("mpg.csv")
+mpg <- read.csv("mpg.csv")
+ggplot(data = mpg, aes(x = drv)) +
+  geom_bar(fill = "darkred") +
+  labs(title = "Barplot of drv Variable", x = "drv", y = "Count")
+
+ggplot(data = mpg, aes(x = hwy, fill = drv)) +
+  geom_histogram(binwidth = 2, position = "dodge") +
+  facet_wrap(~drv) +
+  labs(title = "Histogram of highway miles per gallon, for each drv type", x = "Highway MPG", y = "Frequency")
+
+ggplot(data = mpg, aes(x = drv, y = hwy, fill = drv)) +
+  geom_boxplot() +
+  labs(title = "Box plots for highway miles per gallon for each drv type", x = "drv", y = "Highway MPG")
+
+```
+

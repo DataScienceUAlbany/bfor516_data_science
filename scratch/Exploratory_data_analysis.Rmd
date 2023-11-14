@@ -1,0 +1,52 @@
+---
+title: "Exploratory Data Analysis"
+output: html_notebook
+---
+
+## Load packages
+
+```{r, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(DT)
+
+```
+
+## Load data
+
+```{r}
+dat_mpg <- mpg
+
+```
+
+##Barplot for DRV variable
+
+```{r}
+ggplot() + 
+  geom_bar(data = dat_mpg, 
+           mapping = aes(x = drv, fill = drv)) + 
+  theme(legend.position = 'none',
+    text = element_text(size = 18),
+        axis.text.x = element_text(angle = 0),
+    )
+```
+##Histograms for hwy mpg per drv type
+
+```{r}
+ggplot(dat_mpg, aes(x = hwy)) + 
+  geom_histogram(binwidth = 1) +
+  facet_grid(drv ~ .)
+```
+
+
+##Boxplot for HWY mpg per DRV type
+
+```{r}
+ggplot() + 
+  geom_boxplot(data = dat_mpg,  
+               mapping = aes(x = drv, y = hwy, fill= drv)) +
+  theme(text = element_text(size = 12), legend.position = "top")
+```
+
+
+

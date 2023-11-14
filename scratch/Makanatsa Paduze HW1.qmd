@@ -1,0 +1,63 @@
+---
+title: "Makanatsa Paduze HW1"
+format: html
+editor: visual
+---
+
+```{r, echo=TRUE}
+```
+
+```{r}
+#packets loading  
+library(tidyverse) 
+library(knitr) 
+library(DT)
+```
+
+```{r}
+#data loading  
+dat_mpg <- mpg 
+```
+
+```{r}
+#reading the csv file  
+dat_mpg <- read_csv("mpg.csv")
+```
+
+# Solutions
+
+1.  A barplot is a visualization model that uses bars to present the relationship between a numeric variable and a category variable. The category variable is represented by the rectangle bar and the height / size of the bar represents the numeric value.
+
+```{r}
+ggplot() +    
+  geom_bar(data = dat_mpg,             
+           mapping = aes(x = drv, fill = drv)) +   
+  labs(title = " Histogram for drv variable        
+       ")
+```
+
+2.  A histogram is a data visualization model that uses rectangles to show the distribution frequency of data.
+
+    ```{r}
+    ggplot() +   
+      geom_histogram(data = dat_mpg,                   
+                     mapping = aes(x = hwy, fill = drv),                  
+                     color = "black",                  
+                     alpha = 0.5, bins = 10) + facet_wrap(~ drv, ncol = 3) +   
+      labs(title = " Highway miles per gallon for drv        
+           ")                  
+    ```
+
+    3.  A boxplot is a data visualization method that shows the summary of a set of data. The summary shows the first quartile, the mean the third quartile and the maximum. The mean is denoted by the vertical line that goes through the box. The data shows the vehicles of drv category f use the most gallons of fuel per highway mile as they have the highest mean of 28.2. Vehicles of variable drv in category 4 are cost effective as they use an average of 19.2 gallons of fuel per highway meter which is the lowest as compared to the other two vehicle categories in variable drv.
+
+    ```{r}
+    ggplot() +    
+      geom_boxplot(data = dat_mpg,                 
+                   mapping = aes(x = drv, y = hwy, fill= drv)) +   
+      labs(title = " Box Plot for Highway per gallon for for each Drv type.        
+           ")
+    ```
+
+```{r}
+dat_mpg %>% group_by(drv) %>% summarise(mean = mean(hwy), sd = sd(hwy), n = n())
+```

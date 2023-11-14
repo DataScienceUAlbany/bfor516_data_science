@@ -1,0 +1,219 @@
+---
+title: "Classification: Supervised Learning"
+subtitle: "Logistic Regression"
+author: "Satish G. Iyengar"
+format: html
+number-sections: true
+editor: visual
+---
+
+```{r, warning=FALSE, message=FALSE, error=FALSE, echo=FALSE}
+library(naivebayes)
+library(tidyverse)
+library(ggplot2)
+library(psych)
+
+```
+
+## Problem Definition
+- Build a model to predict if student $A$ will secure an admit for graduate studies.  
+
+### Data 
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE, error=FALSE}
+dat <- readr::read_csv('binary.csv')
+nrow(dat)
+```
+
+```{r}
+dat %>% head() %>% knitr::kable()
+```
+
+Variables admit and rank should not be interpreted as numerical values. They are factors. 
+
+```{r}
+dat$admit <- as.factor(dat$admit)
+dat$rank <- as.factor(dat$rank)
+
+```
+
+
+#### Dependent variable/Target variable
+
+- 'admit', $Y \in \{0, 1\}$ 
+
+#### Independent variables/Predictors
+
+- gre $(X_1)$
+- gpa $(X_2)$
+- rank (of their undergrad school) $(X_3)$
+
+#### ML Model
+
+- Building a machine learning model to predict $Y$ given predictors $X_1, X_2, X_3$, is to learn the function $f$ from the given labelled data where,
+**$$\textcolor{darkblue} {\hat{Y} = f(X_1, X_2, X_3)}$$**
+
+
+## Data Visualization
+
+### How correlated are the predictor variables?
+
+```{r}
+dat %>% select(-admit) %>% pairs.panels()
+
+```
+
+
+### Sensitivity of gre score (to admit)
+
+```{r}
+dat %>% 
+  ggplot(., aes(x = admit, y = gre, fill = admit)) +
+  geom_boxplot()
+
+```
+
+```{r}
+dat %>% 
+  ggplot(., aes(x = gre, fill = admit)) +
+  geom_density(alpha = 0.5)
+
+```
+
+
+### Sensitivity of gpa score (to admit)
+
+```{r}
+dat %>% 
+  ggplot(., aes(x = admit, y = gpa, fill = admit)) +
+  geom_boxplot()
+
+```
+
+```{r}
+dat %>% 
+  ggplot(., aes(x = gpa, fill = admit)) +
+  geom_density(alpha = 0.5)
+
+```
+
+
+### Admit vs. Rank
+
+```{r}
+tab1 <- xtabs(data = dat, ~admit + rank)
+tab1
+```
+
+
+## Building an ML model
+
+- Data partitioning 
+  - Training set: Sample of data used to fit the model
+  - Validation set: Sample of data used to provide an unbiased evaluation of a model fit on the training dataset while tuning model hyperparameters. 
+  - Test set: Sample of data used to provide an unbiased evaluation of a final model fit on the training dataset.
+
+### Data partitioning
+
+```{r}
+set.seed(1234)
+ind <- sample(2, nrow(dat), replace = T, prob = c(0.8, 0.2))
+train <- dat[ind==1,]
+test <- dat[ind==2, ]
+nrow(train)
+nrow(test)
+```
+
+### Logistic Regression
+
+- Target variable is $p$: probability of getting an admit
+  - $p \in (0, 1)$
+
+```{r}
+x <- seq(-3, 3, by = 0.05)
+y <- 1/(1 + exp(-2*x))
+dat <- data.frame('x' = x, 'y' = y)
+
+ggplot(dat, aes(x,y)) + geom_line(linewidth = 2)
+```
+
+
+
+In general, 
+
+$$p = \frac{1}{1 + \exp\left(-\beta_0 + \beta_1 X_1 + \cdots + \beta_d X_d \right) }  $$
+
+Given labelled data, we would estimate parameters of the above equation ($\beta's$)
+
+
+#### Function call in R to fit a logistic regression model
+
+```{r}
+model <- glm(formula = admit ~ gre + gpa + rank, data = train, family = "binomial")
+
+summary(model)
+
+```
+
+### Performance Assessment
+
+#### Goodness-of-fit
+
+-   How well have I learnt from the training set?
+
+```{r, warning=FALSE, message=FALSE}
+# Prediction
+p1 <- predict(model, train, type = 'response')
+
+posterior_train <- data.frame('posterior_p_admit' = p1) %>%
+  bind_cols(train) %>%
+  mutate(
+    posterior_class = ifelse(posterior_p_admit> 0.5, 1, 0)
+  ) %>%
+  select(starts_with('posterior'), everything())
+
+head(posterior_train)
+
+```
+
+```{r}
+# Confusion matrix and Misclassification error - train data
+tab1 <- table(posterior_train$admit, 
+              posterior_train$posterior_class)
+tab1 %>% knitr::kable()
+
+```
+
+```{r}
+posterior_train %>% 
+  ggplot(., aes(x = admit, y=posterior_p_admit, fill = admit)) + 
+  geom_boxplot()
+
+```
+
+
+
+-   **Misclassification Rate**: `r 1 - sum(diag(tab1))/sum(tab1)`
+
+
+#### Confusion matrix: Test Set
+
+```{r}
+p <- predict(model, test, type = "response")
+
+posterior_test <- data.frame('posterior_p_admit' = p) %>%
+  bind_cols(test) %>%
+  mutate(
+    posterior_class = ifelse(posterior_p_admit> 0.5, 1, 0)
+  ) %>%
+  select(starts_with('posterior'), everything())
+
+head(posterior_test)
+
+tab1 <- table(posterior_test$admit, 
+              posterior_test$posterior_class)
+tab1 %>% knitr::kable()
+```
+
+
+-   **Misclassification Rate**: `r 1 - sum(diag(tab1))/sum(tab1)`

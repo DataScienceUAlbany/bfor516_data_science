@@ -1,0 +1,57 @@
+---
+title: "Homework 1: MPG Exploratory data analysis"
+subtitle: Solution
+author: "Satish G. Iyengar"
+number-sections: false
+format: html
+editor: visual
+---
+
+## Load packages
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(urltools)
+```
+
+
+## Q1: What is a barplot? Draw barplot for the 'drv' variable using R or Python.
+A bar plot is a graph that represents categorical data with rectangular bars. Each category is 
+represented by a separate bar and the height of the bar represents the count of data points in that 
+category.
+
+### Read data
+
+```{r}
+dat_mpg <- mpg
+
+```
+
+
+```{r}
+ggplot(dat_mpg, aes(x=drv, fill = drv)) + geom_bar() + 
+  theme(legend.position = "top")
+```
+
+## What is a histogram? Draw histograms for highway miles per gallon - one for each drv type using R/Python. The histograms should be on the same scale for visual comparison.
+
+A histogram is a type of chart that shows the frequency distribution of data points across a continuous range of numerical values. The values are grouped into bin or buckets that are arranged in consecutive order along the horizontal x-axis at the bottom of the chart. Each bin is represented by a vertical bar that sits on the x-axis and extends upward to indicate the number of data points within that bin [Ref: <https://www.techtarget.com/searchsoftwarequality/definition/histogram>].
+
+
+```{r}
+ggplot(dat_mpg, aes(x=hwy, fill = drv)) + 
+  geom_histogram(alpha = 0.4, bins = 25, color = "black") + 
+  theme(legend.position = "top")
+
+```
+
+## Q3: What is a box plot? Draw box plots for highway miles per gallon variable - one for each drv type in R/Python. The box plots should be on the same scale for visual comparison. What can you conclude from this box plot?
+
+```{r}
+ggplot(dat_mpg, aes(x= drv, y = hwy, fill = drv)) + geom_boxplot() +
+  theme(legend.position = "top")
+```
+
+Based on the given data, the highway miles per gallon for front wheel drive cars have better fuel efficiency than both the all wheel drive and rear wheel drive cars.
+

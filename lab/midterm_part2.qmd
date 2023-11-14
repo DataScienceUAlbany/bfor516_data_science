@@ -1,0 +1,21 @@
+---
+title: "Midterm - Part 2 Solution"
+author: "Satish G. Iyengar"
+format: html
+editor: visual
+---
+
+
+Simulate mean detector runs for the following signal detection in noise problem:
+
+\begin{eqnarray}
+H_0: x(n) & = & w(n), n = 1, 2, \ldots, 10 \\
+H_1: x(n) & = & -1.5 + w(n), n = 1, 2, \ldots, 10,
+\end{eqnarray}
+
+where $w(n) = {w(1), w(2), ..., w(10)}$ are realizations of a normal distribution with zero mean and variance 2.5.
+
+Plot Receiver operating characteristic curve to assess the performance of this detector. Recommend the value of the detector threshold if probability of false alarm cannot be higher than 0.1.
+
+## Solution
+
