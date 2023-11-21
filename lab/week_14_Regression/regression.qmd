@@ -1,0 +1,363 @@
+---
+title: "Regression"
+author: "Satish G. Iyengar"
+format: html
+editor: visual
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+
+## Machine Learning
+
+-   $X$ $\to$ $T(X)$ $\to$ $Y$
+
+-   Classification: $X$ $\in$ $R^N$ $\to$ $Y \in \{0, 1, \ldots, M\}$
+
+-   Regression: $X \in R^N$ $\to$ $R^M$
+
+## Simple Linear Regression
+
+-   Two variables: One target variable ($Y$) and one predictor ($X$)
+
+### Example 1
+
+```{r, echo=FALSE}
+set.seed(123)
+m <- 2
+x <- seq(1, 20, by = 1)
+yhat <- m*x + 2
+e <-  rnorm(length(x), mean = 0, sd = 10)
+y <- yhat + e
+dat <- data.frame("x" = x, "y"=y)
+
+plt_data <- ggplot(dat, aes(x, y)) + geom_point(size = 3, col = "blue") + theme_bw()
+plt_data
+```
+
+#### Model 0
+
+$$ \hat{Y} = \beta_0 $$
+
+```{r}
+dat <- dat %>%
+  mutate(
+    yhat0 = mean(y)
+  )
+
+plt_data_plus_mean <- plt_data + 
+  geom_hline(yintercept = unique(dat$yhat0), 
+             linetype = 'solid', 
+             color = "darkgray", linewidth = 1) +
+  geom_point(data = dat, aes(x, yhat0), col = "darkgray", size = 3) 
+plt_data_plus_mean
+
+```
+
+```{r}
+dat <- dat %>%
+  mutate(
+    yhat0 = mean(y)
+  )
+
+plt_data_plus_mean_plus_error1 <- plt_data_plus_mean +
+  geom_segment(aes(x = dat$x[2], xend = dat$x[2], 
+                   y = dat$y[2], yend = dat$yhat0[2]), 
+               color = "red")
+plt_data_plus_mean_plus_error1
+```
+
+```{r}
+plt_data_plus_mean_plus_error2 <- plt_data_plus_mean_plus_error1 +
+  geom_segment(aes(x = dat$x[6], xend = dat$x[6], 
+                   y = dat$y[6], yend = dat$yhat0[6]), 
+               color = "red")
+plt_data_plus_mean_plus_error2
+
+```
+
+```{r}
+plt_data_plus_mean_plus_errors <- plt_data_plus_mean +
+  geom_segment(aes(x = dat$x, xend = dat$x, 
+                   y = dat$y, yend = dat$yhat0), 
+               color = "red")
+plt_data_plus_mean_plus_errors
+
+```
+
+##### Mean Squared Error
+
+```{=tex}
+\begin{eqnarray}
+MSE & = & \frac{1}{N}\sum_{i=1}^{i=N} \epsilon^2 \\
+ & = & \frac{1}{N}\sum_{i=1}^{i=N} \left(y - \hat{y}\right)^2
+\end{eqnarray}
+```
+```{r}
+mean((dat$y - dat$yhat0)^2)
+
+```
+
+#### Linear model 1
+
+$$ Y = \underbrace{\beta_0 + \beta_1 \cdot X_1}_{\hat{Y} } + \epsilon $$
+
+```{r}
+m <- 3
+c <- -5
+yhat1 <- m*dat$x + c
+
+dat <- dat %>%
+  mutate(
+    yhat1 = yhat1
+  )
+
+plt_data_plus_mean_plus_model_1 <- 
+  plt_data_plus_mean + 
+  geom_line(data = dat, aes(x = x, y = yhat1), linewidth = 1, col = 'purple') + 
+  geom_point(data = dat, aes(x = x, y = yhat1), size = 3, col = 'purple')
+
+plt_data_plus_mean_plus_model_1
+
+```
+
+```{r}
+plt_data_plus_mean_plus_model_1_plus_errors <- plt_data_plus_mean_plus_model_1 +
+  geom_segment(aes(x = dat$x, xend = dat$x, 
+                   y = dat$y, yend = dat$yhat1), 
+               color = "red")
+
+plt_data_plus_mean_plus_model_1_plus_errors
+```
+
+```{r}
+mean((dat$y - dat$yhat1)^2)
+
+```
+
+#### Linear model 2
+
+```{r}
+m <- 2
+c <- 2
+yhat2 <- m*dat$x + c
+
+dat <- dat %>%
+  mutate(
+    yhat2 = yhat2
+  )
+
+plt_data_plus_mean_plus_model_1_plus_model_2 <- 
+  plt_data_plus_mean_plus_model_1 + 
+  geom_line(data = dat, aes(x = x, y = yhat2), 
+            linewidth = 1, 
+            col = 'darkred') + 
+  geom_point(data = dat, 
+             aes(x = x, y = yhat2), size = 3, col = 'darkred')
+
+plt_data_plus_mean_plus_model_1_plus_model_2 +
+  geom_segment(aes(x = dat$x, xend = dat$x, 
+                   y = dat$y, yend = dat$yhat2), 
+               color = "red")
+
+```
+
+```{r}
+mean((dat$y - dat$yhat2)^2)
+
+```
+
+#### Best Linear Model
+
+-   Best in the mean squared error sense
+
+$$ \hat{\beta} = argmin_{\beta_0, \beta_1} \left( \frac{1}{N}\sum_{i=1}^{i=N} \left(y - \hat{y}\right)^2 \right)  $$
+
+### Example: Car Sales vs. TV Ads
+
+```{r}
+dat <- data.frame('car_sales' = c(14, 24, 18, 17, 27),  
+                  'tv_ads' = c(1, 3, 2, 1, 3))
+
+dat %>% knitr::kable()
+
+```
+
+#### Scatter Plot
+
+-   Verify linear relationship
+
+```{r}
+ggplot(data = dat, aes(x = tv_ads, y = car_sales)) + 
+  geom_point(color = 'blue', size = 3) + theme_bw()
+
+```
+
+#### Fit Linear Model
+
+```{r}
+mdl <- lm(car_sales ~ tv_ads, data = dat)
+summary(mdl)
+```
+
+------------------------------------------------------------------------
+
+##### 
+
+$$ Y_{\left(\text{Car Sales}\right)} = `r mdl$coefficients[[2]] ` \cdot X_\left(\text{TV Ads}\right) + `r mdl$coefficients[[1]] ` $$
+
+-   $\beta_0$ = `r mdl$coefficients[[1]]`: Even with zero TV Ads we will still have `r mdl$coefficients[[1]]` car sales.
+
+-   $\beta_1$ = `r mdl$coefficients[[2]]`: An increase in TV Ads by one will increase car sales by `r mdl$coefficients[[2]]`.
+
+#### How good is the model?
+
+-   Coefficient of determination ($R^2$)
+
+```{=tex}
+\begin{eqnarray}
+R^2 & = & 1 - \frac{\text{Sum of Squares Residuals (SSR)}}{\text{Sum o Squares Total (SST)}} \\
+    & = & 1 - \frac{\sum_{i=1}^n{\left(y_i - \hat{y}_i\right)^2}}{\sum_{i=1}^n\left(y_i - \bar{y}\right)^2}
+\end{eqnarray}
+```
+-   **Interpretation**: From the car sales vs. tv ads model summary, we see that about `r round(summary(mdl)$r.squared*100, digits = 2)` % of the variability in the number of cars sold is explained by the linear relationship between the number of TV ads and the number of cars sold.
+
+-   Correlation coefficient ($-1 \leq r \leq 1$)
+
+$$ r = sign(b_1) \cdot \sqrt{r^2}$$
+
+-   Correlation coefficient, r, for the car sales vs. tv model is `r sign(mdl$coefficients[[2]])*round(sqrt(summary(mdl)$r.squared), digits = 2)`
+
+#### Data Partition
+
+#### Prediction
+
+
+## Multiple Linear Regression
+
+### Example: Labor Cost Model
+
+```{r}
+dat_vehicle <- read.csv('vehicle.csv')
+nrow(dat_vehicle)
+dat_vehicle %>% head() %>% knitr::kable()
+
+```
+
+
+### Model: Labor cost ~ Labor Hrs + Mileage
+
+```{r}
+ggplot(dat_vehicle, aes(x = lh, y = lc)) + geom_point()
+
+ggplot(dat_vehicle, aes(x = Mileage, y = lc)) +
+  geom_point()
+
+```
+
+
+
+```{r}
+model_1 <- lm(lc ~ lh + Mileage, data = dat_vehicle)
+summary(model_1)
+  
+```
+
+#### Analysis of Variance (ANOVA)
+
+```{r}
+model_reduced <- lm(lc ~ lh, data = dat_vehicle)
+anova(model_reduced, model_1)
+
+```
+
+
+### How good is my model?
+
+-   Coefficient of determination ($R^2$)
+
+-   **Interpretation**: About `r round(summary(model_reduced)$r.squared*100, digits = 2)` % of the variability in labor cost is explained by the linear relationship between labor cost and labor hours.
+
+-   Correlation coefficient ($-1 \leq r \leq 1$)
+
+$$ r = sign(b_1) \cdot \sqrt{r^2}$$
+
+-   Correlation coefficient, r, for labor cost vs. labor hours is `r sign(model_reduced$coefficients[[2]])*round(sqrt(summary(model_reduced)$r.squared), digits = 2)`
+
+#### Data Partition
+
+```{r}
+set.seed(12345)
+ind <- sample(2, nrow(dat_vehicle), replace = TRUE, 
+              prob = c(0.7, 0.3))
+training <- dat_vehicle[ind==1,]
+testing <- dat_vehicle[ind==2,]
+
+```
+
+
+```{r}
+model <- lm(lc~lh + Mileage, data=training)
+model
+summary(model)
+
+plot(lc~lh, training)
+abline(model, col = "blue")
+
+```
+
+
+#### Prediction
+
+```{r}
+# Prediction
+pred_train <- predict(model, training)
+training <- training %>%
+  mutate(
+    lc_hat = pred_train 
+  )
+
+# Prediction
+pred_test <- predict(model, testing)
+testing <- testing %>%
+  mutate(
+    lc_hat = pred_test
+  )
+
+```
+
+
+```{r}
+rmse_train = sqrt(mean((training$lc - training$lc_hat)^2))
+rmse_test = sqrt(mean((testing$lc - testing$lc_hat)^2))
+rmse_train
+rmse_test
+```
+
+
+```{r}
+predict(model, data.frame(lh=10, Mileage = 50000))
+
+```
+
+##
+
+## Linear Regression (Assumptions and Model Diagnostics)
+
+- Linearity
+- Homoscedasticity (meaning “same variance”)
+  - Residuals random with 'same' variance across all values of the target variable.
+  - When this assumption is violated, we say there is heteroscedasticity.
+  - Normality of residuals
+  - No or little multicollinearity: Little or no relationship between predictors
+  - No auto-correlation
+
+
+```{r}
+# Model Diagnostics
+par(mfrow=c(2,2))
+plot(model)
+
+```
