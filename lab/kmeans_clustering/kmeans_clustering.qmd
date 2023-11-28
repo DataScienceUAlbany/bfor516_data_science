@@ -1,0 +1,163 @@
+---
+title: "Unsupervised Learning"
+subtitle: "K-Means Clustering"
+author: "Satish G. Iyengar"
+format: html
+editor: visual
+---
+
+```{r, echo=FALSE,message=FALSE, error=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+library(caret)
+library(factoextra)
+
+```
+
+## Quick Recap
+  - Machine Learning (ML)
+    - Supervised Learning: Classification and Regression
+    - Unsupervised Learning: Clustering
+    
+  - ML model building workflow 
+
+## Clustering
+
+- An unsupervised machine learning method to find clusters in the given dataset (no *labels*)
+
+- **Goal**: Find structure within a dataset
+  - Observations within each cluster are *similar* to one another and those that belong to different clusters are *different* from one another
+
+- **Applications**
+  - **Academic scores:** Based on the scores, students are categorized into grades like A, B, ... 
+  - **Market segmentation:** Segment customers based on purchase history, interests and actions to enable targeted strategy and marketing campaigns. 
+  - **Identifying crime localities:** With data related to crimes available in specific localities in a city, the category of crime, the area of the crime, and the association between the two can give quality insight into crime-prone areas within a city or a locality.
+  - **Image segmentation**
+  
+
+## Example: IRIS Dataset
+
+
+```{r}
+dat_iris <- iris
+dat_iris %>% head() %>% gt::gt()
+
+```
+
+- Find structure in the IRIS dataset based on sepal and petal size.
+
+- We will use this data without the *Species* column (unsupervised learning).
+
+- This dataset will allow us to compare the output of k-means clustering with the original dataset which we know has 3 groups (`r unique(dat_iris$Species)`).
+
+- Remember you will not have any information about the target variable with applications that need unsupervised learning methods.  
+
+### Scatterplots
+
+```{r, fig.align='center', fig.width=8}
+p_petal <- ggplot(dat_iris, aes(Petal.Length, Petal.Width)) +
+  geom_point(aes(col=Species), size = 3) +
+  theme(legend.position = 'top')
+
+p_sepal<- ggplot(dat_iris, aes(Sepal.Length, Sepal.Width)) +
+  geom_point(aes(col=Species), size = 3)
+
+(p_petal) + 
+  (p_sepal + theme(legend.position = 'none'))
+
+```
+
+
+### Scale Data
+
+- If data is measured on different scales (e.g., gpa scores and gre scores), higher values can bias the result. 
+
+- We will scale variables to have zero mean and unit variance (z-scores)
+
+```{r}
+dat_iris_scaled <- dat_iris %>% dplyr::select(-Species) %>% scale() %>% as.data.frame()
+
+```
+
+### K-Means Clustering
+
+- Identify $k$ centers in the given dataset where $k$ is a parameter that we specify
+
+- **Algorithm**
+  1. Get $k$
+  2. Randomly place $k$ centroids in your data space
+  3. Iterative until convergence:
+      a. Assign each data point to a cluster with the nearest centroid $\left(argmin_j \hspace{2pt} D(x_i, c_j)\right)$
+      b. Move each centroid to the mean of the instances assigned to it
+      
+      c. Check and stop if converged: No instances change cluster membership
+      
+      
+```{r}
+set.seed(123)
+fit_k <- kmeans(dat_iris_scaled, centers = 3)
+fit_k
+  
+```
+
+
+```{r, fig.align='center', fig.width=8, fig.height=8}
+# add cluster membership to our dataset
+dat_iris <- dat_iris %>%
+  dplyr::mutate(
+    cluster = as.factor(fit_k$cluster)
+  )
+
+p_petal_cluster <- dat_iris %>%
+  ggplot(., aes(x = Petal.Length, y = Petal.Width, col = cluster)) +
+  geom_point(size = 3) + theme(legend.position = 'top')
+
+p_petal/p_petal_cluster
+
+```
+
+
+```{r}
+dat_iris <- dat_iris %>%
+  mutate(
+    pred_cluster = case_when(
+      cluster == 1 ~ "setosa",
+      cluster == 2 ~ "versicolor",
+      cluster == 3 ~ "virginica"
+    )
+  )
+
+caret::confusionMatrix(as.factor(dat_iris$pred_cluster), dat_iris$Species)
+
+```
+
+
+### Is there a way to choose $k$?
+
+- Run k-means for many values of $k$ and choose
+
+```{r}
+fviz_nbclust(dat_iris_scaled, kmeans, method = "wss")
+
+```
+
+
+### Generalizability
+
+- Partition data into train, test sets
+
+
+### K-Means Clustering Animation
+
+```{r}
+library(animation)
+kmeans.ani(
+  x = cbind(X1 = dat_iris_scaled$Sepal.Length, X2 = dat_iris_scaled$Sepal.Width),
+  centers = 3,
+  hints = c("Move centers!", "Find cluster?"),
+  pch = 1:3,
+  col = 1:3
+)
+```
+

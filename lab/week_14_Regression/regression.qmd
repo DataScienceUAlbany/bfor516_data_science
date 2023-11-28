@@ -206,7 +206,7 @@ summary(mdl)
 
 ##### 
 
-$$ Y_{\left(\text{Car Sales}\right)} = `r mdl$coefficients[[2]] ` \cdot X_\left(\text{TV Ads}\right) + `r mdl$coefficients[[1]] ` $$
+$$ \hat{Y}_{\left(\text{Car Sales}\right)} = `r mdl$coefficients[[2]] ` \cdot X_\left(\text{TV Ads}\right) + `r mdl$coefficients[[1]] ` $$
 
 -   $\beta_0$ = `r mdl$coefficients[[1]]`: Even with zero TV Ads we will still have `r mdl$coefficients[[1]]` car sales.
 
@@ -234,7 +234,6 @@ $$ r = sign(b_1) \cdot \sqrt{r^2}$$
 
 #### Prediction
 
-
 ## Multiple Linear Regression
 
 ### Example: Labor Cost Model
@@ -246,8 +245,7 @@ dat_vehicle %>% head() %>% knitr::kable()
 
 ```
 
-
-### Model: Labor cost ~ Labor Hrs + Mileage
+### Model: Labor cost \~ Labor Hrs + Mileage
 
 ```{r}
 ggplot(dat_vehicle, aes(x = lh, y = lc)) + geom_point()
@@ -256,8 +254,6 @@ ggplot(dat_vehicle, aes(x = Mileage, y = lc)) +
   geom_point()
 
 ```
-
-
 
 ```{r}
 model_1 <- lm(lc ~ lh + Mileage, data = dat_vehicle)
@@ -272,7 +268,6 @@ model_reduced <- lm(lc ~ lh, data = dat_vehicle)
 anova(model_reduced, model_1)
 
 ```
-
 
 ### How good is my model?
 
@@ -297,7 +292,6 @@ testing <- dat_vehicle[ind==2,]
 
 ```
 
-
 ```{r}
 model <- lm(lc~lh + Mileage, data=training)
 model
@@ -307,7 +301,6 @@ plot(lc~lh, training)
 abline(model, col = "blue")
 
 ```
-
 
 #### Prediction
 
@@ -328,7 +321,6 @@ testing <- testing %>%
 
 ```
 
-
 ```{r}
 rmse_train = sqrt(mean((training$lc - training$lc_hat)^2))
 rmse_test = sqrt(mean((testing$lc - testing$lc_hat)^2))
@@ -336,24 +328,22 @@ rmse_train
 rmse_test
 ```
 
-
 ```{r}
 predict(model, data.frame(lh=10, Mileage = 50000))
 
 ```
 
-##
+## 
 
 ## Linear Regression (Assumptions and Model Diagnostics)
 
-- Linearity
-- Homoscedasticity (meaning “same variance”)
-  - Residuals random with 'same' variance across all values of the target variable.
-  - When this assumption is violated, we say there is heteroscedasticity.
-  - Normality of residuals
-  - No or little multicollinearity: Little or no relationship between predictors
-  - No auto-correlation
-
+-   Linearity
+-   Homoscedasticity (meaning "same variance")
+    -   Residuals random with 'same' variance across all values of the target variable.
+    -   When this assumption is violated, we say there is heteroscedasticity.
+-   Normality of residuals
+-   No or little multicollinearity: Little or no relationship between predictors
+-   No auto-correlation
 
 ```{r}
 # Model Diagnostics

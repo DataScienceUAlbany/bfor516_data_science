@@ -1,0 +1,163 @@
+---
+title: "HW 6: Classification"
+author: "Satish G. Iyengar"
+format: html
+editor: visual
+---
+
+
+## Problem Definition
+
+-   Build a model to predict the variety of flower using petal and sepal size (length and width).
+
+## Load packages
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(psych)
+library(patchwork)
+library(nnet)
+
+```
+
+## Load and visualize data
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+# read data
+dat_iris <- read_csv("iris.csv")
+
+# standardize column names
+dat_iris<- dat_iris %>% 
+  janitor::clean_names()
+  
+dat_iris %>% head() %>% knitr::kable()
+```
+
+
+## Model building
+
+
+
+
+### Target variable: variety
+
+```{r}
+dat_iris %>% ggplot(., aes(x = variety, fill = variety)) + 
+  geom_bar()
+
+```
+
+```{r}
+model <- naive_bayes(variety ~ ., data = dat_iris)
+model
+```
+
+```{r}
+p <- predict(model, dat_iris, type = "prob")
+
+pC <- predict(model, dat_iris, type = "class")
+
+tab1 <- table(dat$variety, 
+              dat$prediction)
+tab1 %>% knitr::kable()
+
+```
+
+
+
+
+
+
+### Approach
+
+- We know how to do binary classification with logistic regression. We will use this method to build the following three binary logistic regression models: 
+
+  1. Setosa vs. No Setosa
+  
+  2. Versicolor vs. No Versicolor
+  
+  3. Virginica vs. No Virginica
+  
+Each of these models will be used to predict $$P(C_i | Data),$$ the probability of class given data. Class $C_i \in \{Setosa, Versicolor, Virginica\}$ and $Data = \{X_{sepal.width}, X_{sepal.length}, X_{petal.width}, X_{petal.length}\}$. 
+
+Our final class estimate then will be 
+
+$$ \hat{C} = argmax_{C_i} P(C_i | Data).$$
+
+#### Setosa vs. No Setosa Model
+
+```{r}
+# Re-define target variable
+dat <- dat_iris
+dat <- dat %>%
+  mutate(
+    #sepal_length = sepal_length + rnorm(nrow(dat), mean = 0, sd=0.25),
+    #sepal_width = sepal_width + rnorm(nrow(dat), mean = 0, sd=0.25),
+    #petal_width = petal_width + rnorm(nrow(dat), mean = 0, sd=0.25),
+    #petal_length = petal_length + rnorm(nrow(dat), mean = 0, sd=0.5),
+    class = 
+      ifelse(variety %in% "Setosa", 1, 0)
+  )
+
+dat$class <- as.factor(dat$class)
+
+```
+
+
+```{r}
+p1 <- ggplot(dat, aes(x = sepal_width,y =0, col = class)) + geom_point()
+p2 <- ggplot(dat, aes(x = sepal_length,y =0, col = class)) + geom_point()
+p3 <- ggplot(dat, aes(x = petal_length,y =0, col = class)) + geom_point()
+p4 <- ggplot(dat, aes(x = petal_width,y =0, col = class)) + geom_point()
+
+p5 <- ggplot(dat, aes(x = petal_length, y = petal_width, col = class)) + geom_point()
+p6 <- ggplot(dat, aes(x = sepal_length, y = sepal_width, col = class)) + geom_point()
+
+(p1 + p2 + p5) / (p3 + p4 + p6)
+
+```
+
+
+```{r}
+model_setosa <- 
+  glm(formula = class ~ sepal_length + sepal_width
+      + petal_length + petal_width, data = dat, 
+      family = "binomial")
+
+model_setosa <- 
+  glm(formula = class ~ 
+      sepal_width, data = dat, 
+      family = "binomial")
+
+summary(model_setosa)
+
+```
+
+
+  
+### How correlated are the predictor variables?
+
+```{r}
+dat_iris %>% select(-variety) %>% pairs.panels()
+
+```
+
+### Data partitioning
+
+```{r}
+dat <- dat_iris
+set.seed(1234)
+ind <- sample(2, nrow(dat), replace = T, prob = c(0.8, 0.2))
+train <- dat[ind==1,]
+test <- dat[ind==2, ]
+nrow(train)
+nrow(test)
+
+```
+
+
+
+
+

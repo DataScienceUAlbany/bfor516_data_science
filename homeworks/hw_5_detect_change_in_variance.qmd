@@ -1,0 +1,88 @@
+---
+title: "HW 5: Detect Change in Variance"
+author: "Satish G. Iyengar"
+format: html
+editor: visual
+---
+
+## 
+
+Assume that we observe $x[n]$ for $n = 1, 2, ..., k$, where $x[n]'s$ are independent and identically distributed (i.i.d). That is, the probability density function of each $x[n]$ is the same, and there is no correlation between the $x[n]'s$. Further, it is also known that,
+
+```{=tex}
+\begin{eqnarray}
+  H0: x[n] & ~ & Normal (mean = 0, variance = 1) \\
+  H1: x[n] & ~ & Normal (mean = 0, variance = 1.5)
+\end{eqnarray}
+```
+Design a detector and plot ROC assuming that we can collect 10 i.i.d samples for decision-making.
+
+## 
+
+## Simulate Data
+
+```{r, warning=FALSE, echo=FALSE, error=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+
+```
+
+```{r}
+repM <- 10000 # number of MonteCarlo trials
+
+k <- 10 # time points per decision
+
+# H0 Model
+muH0 <- 0
+varH0 <- 1
+sdH0 <- sqrt(varH0)
+
+# H1 Model
+muH1 <- 0
+varH1 <- 1.5
+sdH1 <- sqrt(varH1)
+
+test_statistic_h0 <- NA
+test_statistic_h1 <- NA
+for(i in 1:repM){
+  test_statistic_h0[i] <- var(rnorm(k, mean = muH0, sd = sdH0))
+  test_statistic_h1[i] <- var(rnorm(k, mean = muH1, sd = sdH1))
+}
+dat_test_statistic <- 
+  data.frame('test_stat' = test_statistic_h0, 'label' = 'H0') %>%
+  bind_rows(data.frame('test_stat' = test_statistic_h1, 'label' = 'H1'))
+
+```
+
+### Probability Density of Test Statistics Under $H_0$ and $H_1$
+
+```{r}
+dat_test_statistic %>% 
+  ggplot2::ggplot(., aes(x = test_stat, fill = label)) + 
+  geom_density(alpha = 0.3)
+```
+
+## Plot Receiever Operating Characteristic Curve (ROC)
+
+```{r}
+aThreshold <- seq(0, 6, by = 0.05)
+pd_est <- NA
+pf_est <- NA
+for(ith in 1:length(aThreshold)){
+  th <- aThreshold[ith]
+  pf_est[ith] <- sum(test_statistic_h0 > th)/length(test_statistic_h0)
+  pd_est[ith] <- sum(test_statistic_h1 > th)/length(test_statistic_h1)
+}
+
+dat_roc <- 
+  data.frame("threshold" = aThreshold, "pf_est" = pf_est, "pd_est" = pd_est)
+
+```
+
+
+```{r}
+p1<-ggplot(dat_roc, aes(x=pf_est, y=pd_est)) + geom_line() +
+  geom_point() + geom_abline(slope = 1, intercept = 0, col = "grey",
+                             linetype = 'dashed', linewidth = 1)
+
+```
